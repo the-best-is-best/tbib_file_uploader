@@ -20,6 +20,6 @@ dev_dependencies:
 
 flutter:
   fonts:
-    - family: TBIBIcons
+    - family: tbibIcons
       fonts:
-        - asset: assets/fonts/TBIBIcons.ttf
+        - asset: assets/fonts/tbib_icons.ttf

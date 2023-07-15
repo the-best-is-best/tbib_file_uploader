@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:example/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
@@ -15,24 +16,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
+      theme: theme().copyWith(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -58,6 +43,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final bool _isUploading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -78,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Center(
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
@@ -86,6 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TBIBFormField(
                   maxFileSize: 1,
@@ -93,20 +80,32 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (value == null || value.isEmpty) {
                       return 'Please enter some text';
                     }
+
                     return null;
                   },
                   selectedFile: ({name, path}) {
                     print('name: $name, path: $path');
                   },
+                  canDownloadFile: true,
+                  displayNote:
+                      "Note: File size should be less than 1 MB and can select image png , jpg and pdf",
+                  //  downloadFileOnPressed: () {},
                 ),
+                const SizedBox(
+                  height: 10,
+                ),
+                const Text("end of form"),
                 const SizedBox(
                   height: 20,
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      log(_formKey.currentState!.validate().toString());
-                    },
-                    child: const Text('Submit'))
+                Align(
+                  alignment: Alignment.center,
+                  child: ElevatedButton(
+                      onPressed: () {
+                        log(_formKey.currentState!.validate().toString());
+                      },
+                      child: const Text('Submit')),
+                )
               ],
             ),
           ),

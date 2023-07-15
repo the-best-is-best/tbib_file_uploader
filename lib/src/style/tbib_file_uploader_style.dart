@@ -8,6 +8,8 @@ class TBIBUploaderStyle {
     this.labelStyle,
     this.selectFile,
     this.fileUploaderIcon,
+    this.fileDownloadIcon,
+    this.noteStyle,
   });
 
   /// Label Text
@@ -21,4 +23,10 @@ class TBIBUploaderStyle {
 
   /// File Uploader Icon
   final Icon? fileUploaderIcon;
+
+  /// File Downloader Icon
+  final Icon? fileDownloadIcon;
+
+  /// add style to note
+  final TextStyle? noteStyle;
 }

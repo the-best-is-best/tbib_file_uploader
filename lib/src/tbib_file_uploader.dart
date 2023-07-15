@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:tbib_file_uploader/gen/fonts/TBIBIcons.dart';
+import 'package:tbib_file_uploader/gen/fonts/tbib_icons.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 /// A [FormField] that contains a [FileUploader].
@@ -20,8 +20,12 @@ class TBIBFormField extends FormField<String?> {
     this.selectedFile,
     this.changeFileNameTo,
     this.maxFileSize,
-    //this.supportNull = true,
-    // this.setErrorText,
+    this.canDownloadFile = false,
+    this.downloadFileOnPressed,
+    this.displayNote,
+    this.selectDate = false,
+    this.selectTime = false,
+    this.selectedDate,
   }) : super(
           builder: (FormFieldState<String?> state) {
             var data = <dynamic, dynamic>{
@@ -47,62 +51,132 @@ class TBIBFormField extends FormField<String?> {
             );
             return Builder(
               builder: (context) {
+                final borderRadius = (Theme.of(context)
+                        .inputDecorationTheme
+                        .enabledBorder as OutlineInputBorder)
+                    .borderRadius
+                    .bottomLeft;
                 FocusScope.of(context).unfocus();
-                return Column(
-                  children: [
-                    TextFormField(
-                      controller: textEditingController,
-                      keyboardType: TextInputType.none,
-                      decoration: InputDecoration(
-                        errorText: (data['error'].toString().contains('null')
-                            ? null
-                            : data['error'].toString()),
-                        labelText: style?.labelText ?? 'Select File',
-                        labelStyle: style?.labelStyle ??
-                            const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                            ),
-                        suffixIcon: IconButton(
-                          icon: style?.fileUploaderIcon ??
-                              const Icon(TBIBIcons.fileUpload),
-                          onPressed: () async {
-                            await showModalBottomSheet<String>(
-                              context: context,
-                              builder: (context) {
-                                return SelectFile(
-                                  maxFileSize: maxFileSize,
-                                  selectFileOrImage: ({path, name, error}) {
-                                    // log('path $path name $name error $error');
-                                    if (path != null || error != null) {
-                                      state.didChange(
-                                        json.encode({
-                                          'path': path,
-                                          'name': name,
-                                          'error': error
-                                        }),
-                                      );
-                                    } else {
-                                      state.didChange(null);
-                                    }
-                                    selectedFile?.call(
-                                      path: path,
-                                      name: name,
-                                    );
-                                  },
-                                );
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(borderRadius),
+                    border: Border.all(
+                      color: state.hasError
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context)
+                                  .inputDecorationTheme
+                                  .enabledBorder
+                                  ?.borderSide
+                                  .color ??
+                              Colors.black,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        controller: textEditingController,
+                        keyboardType: TextInputType.none,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          disabledBorder: InputBorder.none,
+                          errorBorder: InputBorder.none,
+                          errorText: (data['error'].toString().contains('null')
+                              ? null
+                              : data['error'].toString()),
+                          labelText: style?.labelText ?? 'Select File',
+                          labelStyle: style?.labelStyle ??
+                              const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: style?.fileUploaderIcon ??
+                                    const Icon(
+                                      TbibIcons.fileUpload,
+                                      size: 20,
+                                      color: Colors.black,
+                                    ),
+                                onPressed: () async {
+                                  await selectFileOrImage(
+                                    context,
+                                    maxFileSize,
+                                    state,
+                                    selectedFile,
+                                  );
+                                },
+                              ),
+                              if (canDownloadFile) ...{
+                                IconButton(
+                                  icon: style?.fileDownloadIcon ??
+                                      Icon(
+                                        TbibIcons.fileDownload,
+                                        size: 20,
+                                        color: downloadFileOnPressed != null
+                                            ? Colors.black
+                                            : null,
+                                      ),
+                                  onPressed: downloadFileOnPressed,
+                                ),
                               },
-                            );
-                          },
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 10),
+                      if (displayNote != null) ...{
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Text(
+                            displayNote,
+                            style: style?.noteStyle ??
+                                const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                ),
+                          ),
+                        ),
+                      },
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 );
               },
             );
           },
         );
+
+  static Future<void> selectFileOrImage(
+    BuildContext context,
+    int? maxFileSize,
+    FormFieldState<String?> state,
+    void Function({String? name, String? path})? selectedFile,
+  ) async {
+    await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) {
+        return SelectFile(
+          maxFileSize: maxFileSize,
+          selectFileOrImage: ({path, name, error}) {
+            // log('path $path name $name error $error');
+            if (path != null || error != null) {
+              state.didChange(
+                json.encode({'path': path, 'name': name, 'error': error}),
+              );
+            } else {
+              state.didChange(null);
+            }
+            selectedFile?.call(name: name, path: path);
+          },
+        );
+      },
+    );
+  }
 
   /// File Uploader Style
   final TBIBUploaderStyle? style;
@@ -110,14 +184,28 @@ class TBIBFormField extends FormField<String?> {
   /// Select File data
   final void Function({String? path, String? name})? selectedFile;
 
-  /// Change file name after selected
+  /// [changeFileNameTo] Change file name after selected
   final String? changeFileNameTo;
 
   /// [maxFileSize] by MB.
   final int? maxFileSize;
 
-  /// add your error text
-  //final String? setErrorText;
+  /// [canDownloadFile] if true, you can download file after upload.
+  final bool canDownloadFile;
 
-  //final bool supportNull;
+  /// [downloadFileOnPressed] if [canDownloadFile] is true, you can download f
+  /// ile after upload.
+  final void Function()? downloadFileOnPressed;
+
+  /// [displayNote] to display note.
+  final String? displayNote;
+
+  /// [selectDate] if true you need use [selectedDate].
+  final bool selectDate;
+
+  /// [selectedDate] if true you need use [selectedDate].
+  final bool selectTime;
+
+  /// [selectedDate] to select date and time for file.
+  final void Function(DateTime? date)? selectedDate;
 }
