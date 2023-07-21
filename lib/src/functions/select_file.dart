@@ -8,6 +8,7 @@ Future<({String? path, String? name, String? error})> selectFileAsync({
   final file = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowedExtensions: ['png', 'jpg', 'pdf'],
+    
   );
   if (file?.files == null) {
     return (path: null, name: null, error: null);

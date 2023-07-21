@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:file_picker_pro/file_data.dart';
+import 'package:file_picker_pro/file_picker.dart';
+import 'package:file_picker_pro/files.dart';
 import 'package:flutter/material.dart';
 import 'package:tbib_file_uploader/gen/fonts/tbib_icons.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
@@ -46,105 +49,100 @@ class TBIBFormField extends FormField<String?> {
                 data = json.decode(state.value!) as Map<dynamic, dynamic>;
               }
             }
+            final fileData = FileData();
             final textEditingController = TextEditingController(
               text: data['path'] != null ? 'File Selected' : '',
             );
             return Builder(
               builder: (context) {
-                final borderRadius = (Theme.of(context)
-                        .inputDecorationTheme
-                        .enabledBorder as OutlineInputBorder)
-                    .borderRadius
-                    .bottomLeft;
                 FocusScope.of(context).unfocus();
-                return Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(borderRadius),
-                    border: Border.all(
-                      color: state.hasError
-                          ? Theme.of(context).colorScheme.error
-                          : Theme.of(context)
-                                  .inputDecorationTheme
-                                  .enabledBorder
-                                  ?.borderSide
-                                  .color ??
-                              Colors.black,
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TextFormField(
-                        controller: textEditingController,
-                        keyboardType: TextInputType.none,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          disabledBorder: InputBorder.none,
-                          errorBorder: InputBorder.none,
-                          errorText: (data['error'].toString().contains('null')
-                              ? null
-                              : data['error'].toString()),
-                          labelText: style?.labelText ?? 'Select File',
-                          labelStyle: style?.labelStyle ??
-                              const TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                              ),
-                          suffixIcon: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                icon: style?.fileUploaderIcon ??
-                                    const Icon(
-                                      TbibIcons.fileUpload,
-                                      size: 20,
-                                      color: Colors.black,
-                                    ),
-                                onPressed: () async {
-                                  await selectFileOrImage(
-                                    context,
-                                    maxFileSize,
-                                    state,
-                                    selectedFile,
-                                  );
-                                },
-                              ),
-                              if (canDownloadFile) ...{
-                                IconButton(
-                                  icon: style?.fileDownloadIcon ??
-                                      Icon(
-                                        TbibIcons.fileDownload,
-                                        size: 20,
-                                        color: downloadFileOnPressed != null
-                                            ? Colors.black
-                                            : null,
-                                      ),
-                                  onPressed: downloadFileOnPressed,
-                                ),
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: textEditingController,
+                      keyboardType: TextInputType.none,
+                      decoration: InputDecoration(
+                        errorText: (data['error'].toString().contains('null')
+                            ? null
+                            : data['error'].toString()),
+                        labelText: style?.labelText ?? 'Select File',
+                        hintText: 'Select FileS',
+                        labelStyle: style?.labelStyle ??
+                            const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                        suffixIcon: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              icon: style?.fileUploaderIcon ??
+                                  const Icon(
+                                    TbibIcons.fileUpload,
+                                    size: 20,
+                                    color: Colors.black,
+                                  ),
+                              onPressed: () async {
+                                await selectFileOrImage(
+                                  context,
+                                  maxFileSize,
+                                  state,
+                                  selectedFile,
+                                );
                               },
-                            ],
-                          ),
+                            ),
+                            if (canDownloadFile) ...{
+                              IconButton(
+                                icon: style?.fileDownloadIcon ??
+                                    Icon(
+                                      TbibIcons.fileDownload,
+                                      size: 20,
+                                      color: downloadFileOnPressed != null
+                                          ? Colors.black
+                                          : null,
+                                    ),
+                                onPressed: downloadFileOnPressed,
+                              ),
+                            },
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      if (displayNote != null) ...{
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Text(
-                            displayNote,
-                            style: style?.noteStyle ??
-                                const TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 12,
-                                ),
-                          ),
+                    ),
+                    const SizedBox(height: 10),
+                    if (displayNote != null) ...{
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          displayNote,
+                          style: style?.noteStyle ??
+                              const TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                              ),
                         ),
+                      ),
+                    },
+                    FilePicker(
+                      context: context,
+                      height: 100,
+                      fileData: fileData,
+                      maxFileSizeInMb: 10,
+                      allowedExtensions: const [
+                        Files.jpeg,
+                        Files.jpg,
+                        Files.png,
+                        Files.pdf,
+                      ],
+                      onSelected: (fileData) {
+                        fileData = fileData;
                       },
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                      onCancel: (message, messageCode) {
+                        log('[$messageCode] $message');
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 );
               },
             );

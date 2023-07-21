@@ -6,10 +6,11 @@ environment:
   sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
-  file_picker: ^5.3.2
+  # file_picker: ^5.3.2
   flutter:
     sdk: flutter
-  image_picker: ^1.0.1
+  # image_picker: ^1.0.1
+  file_picker_pro: ^1.4.0
   permission_handler: ^10.4.3
 
 dev_dependencies:
