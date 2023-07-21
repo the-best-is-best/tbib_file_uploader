@@ -3,11 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  file_picker_pro
+  awesome_notifications
   file_selector_windows
-  open_share_plus
   permission_handler_windows
-  url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

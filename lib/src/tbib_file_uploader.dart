@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:file_picker_pro/file_data.dart';
-import 'package:file_picker_pro/file_picker.dart';
-import 'package:file_picker_pro/files.dart';
 import 'package:flutter/material.dart';
 import 'package:tbib_file_uploader/gen/fonts/tbib_icons.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
@@ -39,17 +36,12 @@ class TBIBFormField extends FormField<String?> {
             if (state.hasError) {
               data['error'] = state.errorText;
             } else {
-              // if (setErrorText != null) {
-              //   data['error'] = setErrorText;
-              // }
-
               log('message ${state.value}');
 
               if (state.value != null) {
                 data = json.decode(state.value!) as Map<dynamic, dynamic>;
               }
             }
-            final fileData = FileData();
             final textEditingController = TextEditingController(
               text: data['path'] != null ? 'File Selected' : '',
             );
@@ -123,25 +115,6 @@ class TBIBFormField extends FormField<String?> {
                         ),
                       ),
                     },
-                    FilePicker(
-                      context: context,
-                      height: 100,
-                      fileData: fileData,
-                      maxFileSizeInMb: 10,
-                      allowedExtensions: const [
-                        Files.jpeg,
-                        Files.jpg,
-                        Files.png,
-                        Files.pdf,
-                      ],
-                      onSelected: (fileData) {
-                        fileData = fileData;
-                      },
-                      onCancel: (message, messageCode) {
-                        log('[$messageCode] $message');
-                      },
-                    ),
-                    const SizedBox(height: 20),
                   ],
                 );
               },

@@ -1,5 +1,8 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:example/src/api_model.dart';
 import 'package:example/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
@@ -43,6 +46,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  File? selectedFile;
   final bool _isUploading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
@@ -79,12 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter some text';
+                    } else if (selectedFile == null) {
+                      return 'Please select file';
                     }
 
                     return null;
                   },
                   selectedFile: ({name, path}) {
-                    print('name: $name, path: $path');
+                    if (path != null) {
+                      selectedFile = File(path);
+                    }
                   },
                   canDownloadFile: true,
                   displayNote:
@@ -101,8 +109,32 @@ class _MyHomePageState extends State<MyHomePage> {
                 Align(
                   alignment: Alignment.center,
                   child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         log(_formKey.currentState!.validate().toString());
+                        if (_formKey.currentState!.validate()) {
+                          Map<String, dynamic> dataApi =
+                              await UploadFile().startUploadFileWithResponse(
+                            dio: Dio(
+                              BaseOptions(
+                                baseUrl: 'https://api.escuelajs.co/api/v1/',
+                              ),
+                            ),
+                            pathApi: 'files/upload',
+                            method: 'POST',
+                            yourData: FormData.fromMap(
+                              {
+                                'file': MultipartFile.fromFileSync(
+                                  selectedFile!.path,
+                                  filename: selectedFile!.path
+                                      .split(Platform.pathSeparator)
+                                      .last,
+                                ),
+                              },
+                            ),
+                          );
+                          var res = ApiModel.fromMap(dataApi);
+                          log(res.toJson());
+                        }
                       },
                       child: const Text('Submit')),
                 )
