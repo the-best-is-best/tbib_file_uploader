@@ -200,7 +200,7 @@ class TBIBUploaderFormField extends FormField<String?> {
   final String? displayNote;
 
   /// [allowedExtensions] if use select from storage will display only this extensions.
-  List<String>? allowedExtensions;
+  final List<String>? allowedExtensions;
 
   // /// [selectDate] if true you need use [selectedDate].
   // final bool selectDate;

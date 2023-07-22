@@ -11,6 +11,7 @@ This package for upload file you can display notifications and progress notifica
 <img  src="https://github.com/the-best-is-best/tbib_file_uploader/blob/main/github_assets/screen2.png?raw=true" height="300"></img>
 
 - Notification with progress bar
+  
 <img  src="https://github.com/the-best-is-best/tbib_file_uploader/blob/main/github_assets/screen3.png?raw=true" height="300"></img>
 
 - Notification downloaded ended
