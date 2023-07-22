@@ -9,7 +9,7 @@ import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  TBIBFileUploader().init();
+  await TBIBFileUploader().init();
   runApp(const MyApp());
 }
 
