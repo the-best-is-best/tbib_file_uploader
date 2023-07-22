@@ -6,7 +6,7 @@ This package for upload file you can display notifications and progress notifica
 
 - Can display progress in your app
   
-<img  src="https://github.com/the-best-is-best/tbib_downloader/blob/master/github_assets/app.jpg?raw=true" height="300"></img>
+<img  src="https://github.com/the-best-is-best/tbib_file_uploader/blob/master/github_assets/screen1.jpg?raw=true" height="300"></img>
 
 - Notification with progress bar
 

@@ -102,6 +102,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     'png',
                     'jpg',
                     'pdf',
+                    'xls',
+                    'xlsx',
                   ],
 
                   displayNote:
