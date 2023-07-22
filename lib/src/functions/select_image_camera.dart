@@ -4,9 +4,8 @@ import 'package:image_picker/image_picker.dart';
 
 /// select image from camera
 /// [maxSize] is in MB
-Future<({String? path, String? name, String? error})> selectImageCameraAsync({
-  int? maxSize,
-}) async {
+Future<({String? path, String? name, String? error})> selectImageCameraAsync(
+    {int? maxSize, String? changeFileNameTo}) async {
   final picker = ImagePicker();
   final image = await picker.pickImage(source: ImageSource.camera);
   if (image == null) return (path: null, name: null, error: null);
@@ -18,14 +17,20 @@ Future<({String? path, String? name, String? error})> selectImageCameraAsync({
     }
   }
 
+  if (changeFileNameTo != null) {
+    final fileName = image.name;
+    final fileExtension = fileName.split('.').last;
+    final newFileName = '$changeFileNameTo.$fileExtension';
+    return (path: image.path, name: newFileName, error: null);
+  }
+
   return (path: image.path, name: image.name, error: null);
 }
 
 /// select image from gallery
 /// [maxSize] is in MB
-Future<({String? path, String? name, String? error})> selectImageGalleryAsync({
-  int? maxSize,
-}) async {
+Future<({String? path, String? name, String? error})> selectImageGalleryAsync(
+    {int? maxSize, String? changeFileNameTo}) async {
   final picker = ImagePicker();
   final image = await picker.pickImage(
     source: ImageSource.gallery,
@@ -37,6 +42,13 @@ Future<({String? path, String? name, String? error})> selectImageGalleryAsync({
     if (imageBytes.lengthInBytes > maxSize * 1000000) {
       return (path: null, name: null, error: 'Image size is too large');
     }
+  }
+
+  if (changeFileNameTo != null) {
+    final fileName = image.name;
+    final fileExtension = fileName.split('.').last;
+    final newFileName = '$changeFileNameTo.$fileExtension';
+    return (path: image.path, name: newFileName, error: null);
   }
 
   final newFile = XFile(File(image.path).path);

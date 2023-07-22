@@ -10,6 +10,8 @@ class SelectFile extends StatefulWidget {
     required this.selectFileOrImage,
     super.key,
     this.maxFileSize,
+    this.changeFileNameTo,
+    this.allowedExtensions,
   });
 
   /// [selectFileOrImage] is a function that returns a [FileUploader].
@@ -21,6 +23,8 @@ class SelectFile extends StatefulWidget {
 
   /// [maxFileSize] by MB.
   final int? maxFileSize;
+  final String? changeFileNameTo;
+  final List<String>? allowedExtensions;
 
   @override
   State<SelectFile> createState() => _SelectFileState();
@@ -58,8 +62,10 @@ class _SelectFileState extends State<SelectFile> {
                 // ),
                 onPressed: () async {
                   Navigator.pop(context);
-                  final file =
-                      await selectFileAsync(maxSize: widget.maxFileSize);
+                  final file = await selectFileAsync(
+                      maxSize: widget.maxFileSize,
+                      changeFileNameTo: widget.changeFileNameTo,
+                      allowedExtensions: widget.allowedExtensions);
                   return widget.selectFileOrImage(
                     path: file.path,
                     name: file.name,
@@ -88,6 +94,7 @@ class _SelectFileState extends State<SelectFile> {
 
                   final image = await selectImageGalleryAsync(
                     maxSize: widget.maxFileSize,
+                    changeFileNameTo: widget.changeFileNameTo,
                   );
                   return widget.selectFileOrImage(
                     path: image.path,
@@ -115,8 +122,9 @@ class _SelectFileState extends State<SelectFile> {
                 onPressed: () async {
                   Navigator.pop(context);
 
-                  final image =
-                      await selectImageCameraAsync(maxSize: widget.maxFileSize);
+                  final image = await selectImageCameraAsync(
+                      maxSize: widget.maxFileSize,
+                      changeFileNameTo: widget.changeFileNameTo);
                   return widget.selectFileOrImage(
                     path: image.path,
                     name: image.name,

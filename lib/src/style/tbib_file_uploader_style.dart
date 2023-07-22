@@ -10,6 +10,7 @@ class TBIBUploaderStyle {
     this.fileUploaderIcon,
     this.fileDownloadIcon,
     this.noteStyle,
+    this.hideBorder = false,
   });
 
   /// Label Text
@@ -29,4 +30,7 @@ class TBIBUploaderStyle {
 
   /// add style to note
   final TextStyle? noteStyle;
+
+  /// hide border of text field
+  final bool hideBorder;
 }

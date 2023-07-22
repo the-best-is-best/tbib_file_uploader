@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TBIBFormField(
+                TBIBUploaderFormField(
                   maxFileSize: 5,
                   validator: (value) {
                     if (selectedFile == null) {
@@ -96,14 +96,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {});
                   },
                   canDownloadFile: true,
+                  // hideBorder: true,
+                  changeFileNameTo: 'doc_1',
+                  allowedExtensions: const [
+                    'png',
+                    'jpg',
+                    'pdf',
+                  ],
+
                   displayNote:
                       "Note: File size should be less than 5 MB and can select image png , jpg and pdf",
                   //  downloadFileOnPressed: () {},
                 ),
-                const SizedBox(
-                  height: 10,
-                ),
-                const Text("end of form"),
+                // const SizedBox(
+                //   height: 10,
+                // ),
+                // const Text("end of form"),
                 const SizedBox(
                   height: 20,
                 ),

@@ -6,9 +6,9 @@ import 'package:tbib_file_uploader/gen/fonts/tbib_icons.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 /// A [FormField] that contains a [FileUploader].
-class TBIBFormField extends FormField<String?> {
-  /// Creates a [TBIBFormField] that contains a [FileUploader].
-  TBIBFormField({
+class TBIBUploaderFormField extends FormField<String?> {
+  /// Creates a [TBIBUploaderFormField] that contains a [FileUploader].
+  TBIBUploaderFormField({
     super.key,
     // super.onSaved,
     super.validator,
@@ -23,9 +23,7 @@ class TBIBFormField extends FormField<String?> {
     this.canDownloadFile = false,
     this.downloadFileOnPressed,
     this.displayNote,
-    this.selectDate = false,
-    this.selectTime = false,
-    this.selectedDate,
+    this.allowedExtensions,
   }) : super(
           builder: (FormFieldState<String?> state) {
             var data = <dynamic, dynamic>{
@@ -55,6 +53,31 @@ class TBIBFormField extends FormField<String?> {
                       controller: textEditingController,
                       keyboardType: TextInputType.none,
                       decoration: InputDecoration(
+                        border: style == null
+                            ? null
+                            : style.hideBorder
+                                ? InputBorder.none
+                                : null,
+                        enabledBorder: style == null
+                            ? null
+                            : style.hideBorder
+                                ? InputBorder.none
+                                : null,
+                        focusedBorder: style == null
+                            ? null
+                            : style.hideBorder
+                                ? InputBorder.none
+                                : null,
+                        disabledBorder: style == null
+                            ? null
+                            : style.hideBorder
+                                ? InputBorder.none
+                                : null,
+                        focusedErrorBorder: style == null
+                            ? null
+                            : style.hideBorder
+                                ? InputBorder.none
+                                : null,
                         errorText: (data['error'].toString().contains('null')
                             ? null
                             : data['error'].toString()),
@@ -77,11 +100,12 @@ class TBIBFormField extends FormField<String?> {
                                   ),
                               onPressed: () async {
                                 await _selectFileOrImage(
-                                  context,
-                                  maxFileSize,
-                                  state,
-                                  selectedFile,
-                                );
+                                    context,
+                                    maxFileSize,
+                                    state,
+                                    selectedFile,
+                                    changeFileNameTo,
+                                    allowedExtensions);
                               },
                             ),
                             if (canDownloadFile) ...{
@@ -127,12 +151,16 @@ class TBIBFormField extends FormField<String?> {
     int? maxFileSize,
     FormFieldState<String?> state,
     void Function({String? name, String? path})? selectedFile,
+    String? changeFileNameTo,
+    List<String>? allowedExtensions,
   ) async {
     await showModalBottomSheet<String>(
       context: context,
       builder: (context) {
         return SelectFile(
           maxFileSize: maxFileSize,
+          changeFileNameTo: changeFileNameTo,
+          allowedExtensions: allowedExtensions,
           selectFileOrImage: ({path, name, error}) {
             // log('path $path name $name error $error');
             if (path != null || error != null) {
@@ -171,12 +199,15 @@ class TBIBFormField extends FormField<String?> {
   /// [displayNote] to display note.
   final String? displayNote;
 
-  /// [selectDate] if true you need use [selectedDate].
-  final bool selectDate;
+  /// [allowedExtensions] if use select from storage will display only this extensions.
+  List<String>? allowedExtensions;
 
-  /// [selectedDate] if true you need use [selectedDate].
-  final bool selectTime;
+  // /// [selectDate] if true you need use [selectedDate].
+  // final bool selectDate;
 
-  /// [selectedDate] to select date and time for file.
-  final void Function(DateTime? date)? selectedDate;
+  // /// [selectedDate] if true you need use [selectedDate].
+  // final bool selectTime;
+
+  // /// [selectedDate] to select date and time for file.
+  // final void Function(DateTime? date)? selectedDate;
 }

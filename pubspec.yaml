@@ -1,5 +1,5 @@
 name: tbib_file_uploader
-description: Upload image or file widget and will receive file name and path
+description: This package for upload file you can display notifications and progress notification and can receive upload bytes and total bytes
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
