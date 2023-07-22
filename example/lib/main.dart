@@ -7,7 +7,9 @@ import 'package:example/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  TBIBFileUploader().init();
   runApp(const MyApp());
 }
 
@@ -81,9 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 TBIBFormField(
                   maxFileSize: 1,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    } else if (selectedFile == null) {
+                    if (selectedFile == null) {
                       return 'Please select file';
                     }
 
@@ -93,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     if (path != null) {
                       selectedFile = File(path);
                     }
+                    setState(() {});
                   },
                   canDownloadFile: true,
                   displayNote:
@@ -113,7 +114,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         log(_formKey.currentState!.validate().toString());
                         if (_formKey.currentState!.validate()) {
                           Map<String, dynamic> dataApi =
-                              await UploadFile().startUploadFileWithResponse(
+                              await TBIBFileUploader()
+                                  .startUploadFileWithResponse(
                             dio: Dio(
                               BaseOptions(
                                 baseUrl: 'https://api.escuelajs.co/api/v1/',

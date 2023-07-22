@@ -1,4 +1,7 @@
 PODS:
+  - awesome_notifications (0.0.5):
+    - Flutter
+    - IosAwnCore (= 0.7.3)
   - DKImagePickerController/Core (4.3.4):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
@@ -33,82 +36,55 @@ PODS:
   - file_picker (0.0.1):
     - DKImagePickerController/PhotoGallery
     - Flutter
-  - file_picker_pro (0.0.1):
-    - Flutter
   - Flutter (1.0.0)
-  - image_cropper (0.0.4):
-    - Flutter
-    - TOCropViewController (~> 2.6.1)
   - image_picker_ios (0.0.1):
     - Flutter
-  - open_filex (0.0.2):
-    - Flutter
-  - open_share_plus (0.0.1):
-    - Flutter
+  - IosAwnCore (0.7.3)
   - permission_handler_apple (9.1.1):
     - Flutter
   - SDWebImage (5.17.0):
     - SDWebImage/Core (= 5.17.0)
   - SDWebImage/Core (5.17.0)
   - SwiftyGif (5.4.4)
-  - TOCropViewController (2.6.1)
-  - url_launcher_ios (0.0.1):
-    - Flutter
 
 DEPENDENCIES:
+  - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
-  - file_picker_pro (from `.symlinks/plugins/file_picker_pro/ios`)
   - Flutter (from `Flutter`)
-  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
-  - open_filex (from `.symlinks/plugins/open_filex/ios`)
-  - open_share_plus (from `.symlinks/plugins/open_share_plus/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
-  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
     - DKImagePickerController
     - DKPhotoGallery
+    - IosAwnCore
     - SDWebImage
     - SwiftyGif
-    - TOCropViewController
 
 EXTERNAL SOURCES:
+  awesome_notifications:
+    :path: ".symlinks/plugins/awesome_notifications/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
-  file_picker_pro:
-    :path: ".symlinks/plugins/file_picker_pro/ios"
   Flutter:
     :path: Flutter
-  image_cropper:
-    :path: ".symlinks/plugins/image_cropper/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
-  open_filex:
-    :path: ".symlinks/plugins/open_filex/ios"
-  open_share_plus:
-    :path: ".symlinks/plugins/open_share_plus/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
-  url_launcher_ios:
-    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  awesome_notifications: d63d9a25f126860f9a600850d99772237895b3ba
   DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: ce3938a0df3cc1ef404671531facef740d03f920
-  file_picker_pro: 57e5aa1aa25ce7524969c80fde5852e99c860fb2
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  image_cropper: a3291c624a953049bc6a02e1f8c8ceb162a24b25
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
-  open_filex: 6e26e659846ec990262224a12ef1c528bb4edbe4
-  open_share_plus: e4475cd9e43ff4032d7e7429b21a614fa7d79290
+  IosAwnCore: 6494e0e174d49f04f513e8a002187be226889a37
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   SDWebImage: 750adf017a315a280c60fde706ab1e552a3ae4e9
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
-  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
-  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
 
 PODFILE CHECKSUM: 7be2f5f74864d463a8ad433546ed1de7e0f29aef
 
