@@ -275,7 +275,26 @@ class TBIBFileUploader {
         countDownloaded: countDownloaded,
         totalSize: total,
       );
-    } else {}
+    } else {
+      await _showProgressNotification(
+        // receiveBytesAsFileSizeUnit,
+        showDownloadSpeed,
+        total,
+        countDownloaded,
+        // fileName,
+        startTime,
+      );
+      if (receiveBytesAsMB) {
+        return onSendProgress?.call(
+          countDownloaded: (countDownloaded / _convertBytesToMB).floor(),
+          totalSize: (total / _convertBytesToMB).floor(),
+        );
+      }
+      return onSendProgress?.call(
+        countDownloaded: countDownloaded,
+        totalSize: total,
+      );
+    }
   }
 
   Future<void> _showProgressNotification(

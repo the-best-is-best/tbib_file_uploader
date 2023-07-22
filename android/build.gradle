@@ -1,4 +1,4 @@
-group 'com.tbib_uploader.tbib_uploader'
+group 'com.tbib_file_uploader.tbib_file_uploader'
 version '1.0-SNAPSHOT'
 
 buildscript {
@@ -25,7 +25,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 3
+    compileSdkVersion 31
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -40,14 +40,7 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
     }
-    sourceSets {
-        main {
-            res.srcDirs = [
-                'src/main/res',
-                'src/main/res/raw'
-            ]
-        }
-    }
+
     defaultConfig {
         minSdkVersion 16
     }

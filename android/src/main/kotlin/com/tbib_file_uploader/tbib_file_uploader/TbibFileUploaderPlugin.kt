@@ -1,4 +1,4 @@
-package com.tbib_uploader.tbib_uploader
+package com.tbib_file_uploader.tbib_file_uploader
 
 import androidx.annotation.NonNull
 
@@ -8,8 +8,8 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-/** TbibUploaderPlugin */
-class TbibUploaderPlugin: FlutterPlugin, MethodCallHandler {
+/** TbibFileUploaderPlugin */
+class TbibFileUploaderPlugin: FlutterPlugin, MethodCallHandler {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -17,7 +17,7 @@ class TbibUploaderPlugin: FlutterPlugin, MethodCallHandler {
   private lateinit var channel : MethodChannel
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "tbib_uploader")
+    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "tbib_file_uploader")
     channel.setMethodCallHandler(this)
   }
 

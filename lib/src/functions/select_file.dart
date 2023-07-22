@@ -2,13 +2,11 @@ import 'package:file_picker/file_picker.dart';
 
 /// select file from  file picker
 /// [maxSize] is in MB
-Future<({String? path, String? name, String? error})> selectFileAsync({
-  int? maxSize,
-}) async {
+Future<({String? path, String? name, String? error})> selectFileAsync(
+    {int? maxSize, List<String>? allowedExtensions}) async {
   final file = await FilePicker.platform.pickFiles(
-    type: FileType.custom,
-    allowedExtensions: ['png', 'jpg', 'pdf'],
-    
+    type: allowedExtensions == null ? FileType.any : FileType.custom,
+    allowedExtensions: allowedExtensions,
   );
   if (file?.files == null) {
     return (path: null, name: null, error: null);

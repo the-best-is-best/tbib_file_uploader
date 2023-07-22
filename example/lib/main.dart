@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TBIBFormField(
-                  maxFileSize: 1,
+                  maxFileSize: 5,
                   validator: (value) {
                     if (selectedFile == null) {
                       return 'Please select file';
@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   canDownloadFile: true,
                   displayNote:
-                      "Note: File size should be less than 1 MB and can select image png , jpg and pdf",
+                      "Note: File size should be less than 5 MB and can select image png , jpg and pdf",
                   //  downloadFileOnPressed: () {},
                 ),
                 const SizedBox(

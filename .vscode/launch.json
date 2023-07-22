@@ -10,6 +10,18 @@
             "type": "dart"
         },
         {
+            "name": "tbib_file_uploader (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "tbib_file_uploader (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
             "name": "example",
             "cwd": "example",
             "request": "launch",

@@ -1,10 +1,10 @@
 import Flutter
 import UIKit
 
-public class TbibUploaderPlugin: NSObject, FlutterPlugin {
+public class TbibFileUploaderPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "tbib_uploader", binaryMessenger: registrar.messenger())
-    let instance = TbibUploaderPlugin()
+    let channel = FlutterMethodChannel(name: "tbib_file_uploader", binaryMessenger: registrar.messenger())
+    let instance = TbibFileUploaderPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
