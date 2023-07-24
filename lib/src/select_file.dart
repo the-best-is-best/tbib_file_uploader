@@ -8,10 +8,11 @@ class SelectFile extends StatefulWidget {
 
   const SelectFile({
     required this.selectFileOrImage,
+    required this.maxFileSize,
+    required this.changeFileNameTo,
+    required this.allowedExtensions,
+    required this.imageQuality,
     super.key,
-    this.maxFileSize,
-    this.changeFileNameTo,
-    this.allowedExtensions,
   });
 
   /// [selectFileOrImage] is a function that returns a [FileUploader].
@@ -23,7 +24,14 @@ class SelectFile extends StatefulWidget {
 
   /// [maxFileSize] by MB.
   final int? maxFileSize;
+
+  /// change file name
   final String? changeFileNameTo;
+
+  /// [imageQuality] is a number between 0 and 100.
+  final int? imageQuality;
+
+  /// [allowedExtensions] is a list of allowed extensions.
   final List<String>? allowedExtensions;
 
   @override
@@ -63,9 +71,10 @@ class _SelectFileState extends State<SelectFile> {
                 onPressed: () async {
                   Navigator.pop(context);
                   final file = await selectFileAsync(
-                      maxSize: widget.maxFileSize,
-                      changeFileNameTo: widget.changeFileNameTo,
-                      allowedExtensions: widget.allowedExtensions);
+                    maxSize: widget.maxFileSize,
+                    changeFileNameTo: widget.changeFileNameTo,
+                    allowedExtensions: widget.allowedExtensions,
+                  );
                   return widget.selectFileOrImage(
                     path: file.path,
                     name: file.name,
@@ -95,6 +104,7 @@ class _SelectFileState extends State<SelectFile> {
                   final image = await selectImageGalleryAsync(
                     maxSize: widget.maxFileSize,
                     changeFileNameTo: widget.changeFileNameTo,
+                    imageQuality: widget.imageQuality,
                   );
                   return widget.selectFileOrImage(
                     path: image.path,
@@ -123,8 +133,10 @@ class _SelectFileState extends State<SelectFile> {
                   Navigator.pop(context);
 
                   final image = await selectImageCameraAsync(
-                      maxSize: widget.maxFileSize,
-                      changeFileNameTo: widget.changeFileNameTo);
+                    maxSize: widget.maxFileSize,
+                    changeFileNameTo: widget.changeFileNameTo,
+                    imageQuality: widget.imageQuality,
+                  );
                   return widget.selectFileOrImage(
                     path: image.path,
                     name: image.name,

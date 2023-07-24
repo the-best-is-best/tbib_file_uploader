@@ -24,7 +24,7 @@ This package for upload file you can display notifications and progress notifica
 
 ```swift
  Change
-  BUILD_LIBRARY_FOR_DISTRIBUTION = YES 
+  BUILD_LIBRARY_FOR_DISTRIBUTION = NO 
  to 
  BUILD_LIBRARY_FOR_DISTRIBUTION = NO  
  ```

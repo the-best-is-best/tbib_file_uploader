@@ -24,6 +24,8 @@ class TBIBUploaderFormField extends FormField<String?> {
     this.downloadFileOnPressed,
     this.displayNote,
     this.allowedExtensions,
+    this.showFileName = false,
+    this.imageQuality,
   }) : super(
           builder: (FormFieldState<String?> state) {
             var data = <dynamic, dynamic>{
@@ -41,7 +43,11 @@ class TBIBUploaderFormField extends FormField<String?> {
               }
             }
             final textEditingController = TextEditingController(
-              text: data['path'] != null ? 'File Selected' : '',
+              text: data['path'] != null
+                  ? showFileName && changeFileNameTo != null
+                      ? (data['path'] as String).split('/').last
+                      : 'File Selected'
+                  : '',
             );
             return Builder(
               builder: (context) {
@@ -100,12 +106,14 @@ class TBIBUploaderFormField extends FormField<String?> {
                                   ),
                               onPressed: () async {
                                 await _selectFileOrImage(
-                                    context,
-                                    maxFileSize,
-                                    state,
-                                    selectedFile,
-                                    changeFileNameTo,
-                                    allowedExtensions);
+                                  context,
+                                  maxFileSize,
+                                  state,
+                                  selectedFile,
+                                  changeFileNameTo,
+                                  allowedExtensions,
+                                  imageQuality,
+                                );
                               },
                             ),
                             if (canDownloadFile) ...{
@@ -153,11 +161,13 @@ class TBIBUploaderFormField extends FormField<String?> {
     void Function({String? name, String? path})? selectedFile,
     String? changeFileNameTo,
     List<String>? allowedExtensions,
+    int? imageQuality,
   ) async {
     await showModalBottomSheet<String>(
       context: context,
       builder: (context) {
         return SelectFile(
+          imageQuality: imageQuality,
           maxFileSize: maxFileSize,
           changeFileNameTo: changeFileNameTo,
           allowedExtensions: allowedExtensions,
@@ -202,12 +212,10 @@ class TBIBUploaderFormField extends FormField<String?> {
   /// [allowedExtensions] if use select from storage will display only this extensions.
   final List<String>? allowedExtensions;
 
-  // /// [selectDate] if true you need use [selectedDate].
-  // final bool selectDate;
+  /// [showFileName] is a bool to show file name work
+  /// if you change file name from [changeFileNameTo].
+  final bool showFileName;
 
-  // /// [selectedDate] if true you need use [selectedDate].
-  // final bool selectTime;
-
-  // /// [selectedDate] to select date and time for file.
-  // final void Function(DateTime? date)? selectedDate;
+  /// [imageQuality] is a number between 0 and 100.
+  final int? imageQuality;
 }

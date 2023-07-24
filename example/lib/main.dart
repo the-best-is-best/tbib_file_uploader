@@ -49,7 +49,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   File? selectedFile;
-  final bool _isUploading = false;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
@@ -82,6 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 TBIBUploaderFormField(
                   maxFileSize: 5,
+
                   validator: (value) {
                     if (selectedFile == null) {
                       return 'Please select file';
@@ -92,9 +92,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   selectedFile: ({name, path}) {
                     if (path != null) {
                       selectedFile = File(path);
+                    } else {
+                      selectedFile = null;
                     }
                     setState(() {});
                   },
+                  showFileName: true,
+                  imageQuality: 50,
                   canDownloadFile: true,
                   // hideBorder: true,
                   changeFileNameTo: 'doc_1',

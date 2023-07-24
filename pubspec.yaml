@@ -1,6 +1,7 @@
 name: tbib_file_uploader
-description: This package for upload file you can display notifications and progress notification and can receive upload bytes and total bytes
-version: 0.0.2
+description: This package for upload file you can display notifications and
+  progress notification and can receive upload bytes and total bytes
+version: 1.0.0
 homepage: "https://github.com/the-best-is-best/tbib_file_uploader"
 
 environment:
@@ -14,6 +15,7 @@ dependencies:
   flutter:
     sdk: flutter
   image_picker: ^1.0.1
+  path: ^1.8.3
   permission_handler: ^10.4.3
 
 dev_dependencies:
@@ -24,7 +26,6 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
   # This section identifies this Flutter project as a plugin project.
@@ -55,7 +56,6 @@ flutter:
   #
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # To add custom fonts to your plugin package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
