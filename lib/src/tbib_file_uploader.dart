@@ -70,7 +70,7 @@ class TBIBFileUploader {
         onSendProgress,
   }) async {
     if (_uploadStarted) {
-      log('Download already started');
+      log('Upload already started');
 
       return {};
     }
@@ -160,7 +160,7 @@ class TBIBFileUploader {
         onSendProgress,
   }) async {
     if (_uploadStarted) {
-      log('Download already started');
+      log('Upload already started');
 
       return;
     }

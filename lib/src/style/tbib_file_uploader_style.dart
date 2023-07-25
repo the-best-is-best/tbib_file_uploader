@@ -11,6 +11,7 @@ class TBIBUploaderStyle {
     this.fileDownloadIcon,
     this.noteStyle,
     this.hideBorder = false,
+    this.padding,
   });
 
   /// Label Text
@@ -33,4 +34,7 @@ class TBIBUploaderStyle {
 
   /// hide border of text field
   final bool hideBorder;
+
+  /// [padding] is a EdgeInsetsGeometry to add padding to the widget.
+  final EdgeInsets? padding;
 }

@@ -12,6 +12,7 @@ class SelectFile extends StatefulWidget {
     required this.changeFileNameTo,
     required this.allowedExtensions,
     required this.imageQuality,
+    required this.selectImageOnly,
     super.key,
   });
 
@@ -30,6 +31,9 @@ class SelectFile extends StatefulWidget {
 
   /// [imageQuality] is a number between 0 and 100.
   final int? imageQuality;
+
+  /// [selectImageOnly] is a bool to select image only.
+  final bool selectImageOnly;
 
   /// [allowedExtensions] is a list of allowed extensions.
   final List<String>? allowedExtensions;
@@ -51,38 +55,39 @@ class _SelectFileState extends State<SelectFile> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  minimumSize: Size(size.width, 30),
-                ),
-                label: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Storage',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
+              if (!widget.selectImageOnly)
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    minimumSize: Size(size.width, 30),
+                  ),
+                  label: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Storage',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
+                  // style: TextButton.styleFrom(
+                  //   iconColor: Colors.
+                  // ),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    final file = await selectFileAsync(
+                      maxSize: widget.maxFileSize,
+                      changeFileNameTo: widget.changeFileNameTo,
+                      allowedExtensions: widget.allowedExtensions,
+                    );
+                    return widget.selectFileOrImage(
+                      path: file.path,
+                      name: file.name,
+                      error: file.error,
+                    );
+                  },
+                  icon: const Icon(Icons.sd_storage),
                 ),
-                // style: TextButton.styleFrom(
-                //   iconColor: Colors.
-                // ),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  final file = await selectFileAsync(
-                    maxSize: widget.maxFileSize,
-                    changeFileNameTo: widget.changeFileNameTo,
-                    allowedExtensions: widget.allowedExtensions,
-                  );
-                  return widget.selectFileOrImage(
-                    path: file.path,
-                    name: file.name,
-                    error: file.error,
-                  );
-                },
-                icon: const Icon(Icons.sd_storage),
-              ),
               const SizedBox(height: 10),
               TextButton.icon(
                 style: TextButton.styleFrom(

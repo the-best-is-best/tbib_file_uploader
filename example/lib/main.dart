@@ -48,8 +48,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool hide = false;
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  FormFieldState<String?>? _formFieldState;
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -79,54 +81,98 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TBIBUploaderFormField(
-                  maxFileSize: 5,
+                StatefulBuilder(
+                  // Listen to changes in the ValueNotifier
 
-                  validator: (value) {
-                    if (selectedFile == null) {
-                      return 'Please select file';
-                    }
+                  builder: (_, setState) => Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                            color: Colors.blueAccent,
+                            width: _formFieldState?.value == "hide" ? 0 : 1),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: TBIBUploaderFormField(
+                      state: ({required state}) {
+                        _formFieldState = state;
+                      },
+                      maxFileSize: 5,
 
-                    return null;
-                  },
-                  selectedFile: ({name, path}) {
-                    if (path != null) {
-                      selectedFile = File(path);
-                    } else {
-                      selectedFile = null;
-                    }
-                    setState(() {});
-                  },
-                  showFileName: true,
-                  imageQuality: 50,
-                  canDownloadFile: true,
-                  // hideBorder: true,
-                  changeFileNameTo: 'doc_1',
-                  allowedExtensions: const [
-                    'png',
-                    'jpg',
-                    'pdf',
-                    'xls',
-                    'xlsx',
-                  ],
+                      validator: _formFieldState == null ||
+                              _formFieldState?.value == "hide"
+                          ? null
+                          : (value) {
+                              if (selectedFile == null) {
+                                return 'Please select file';
+                              }
 
-                  displayNote:
-                      "Note: File size should be less than 5 MB and can select image png , jpg and pdf",
-                  //  downloadFileOnPressed: () {},
+                              return null;
+                            },
+                      selectedFile: ({name, path}) {
+                        if (path != null) {
+                          selectedFile = File(path);
+                        } else {
+                          selectedFile = null;
+                        }
+                        setState(() {});
+                      },
+                      style: const TBIBUploaderStyle(
+                          labelText: 'Please select file'),
+                      showFileName: true,
+                      imageQuality: 50,
+                      canDownloadFile: true,
+                      hide: true,
+                      // hideBorder: true,
+                      //changeFileNameTo: 'doc_1',
+                      allowedExtensions: const [
+                        'png',
+                        'jpg',
+                        'pdf',
+                        'xls',
+                        'xlsx',
+                      ],
+
+                      displayNote:
+                          "Note: File size should be less than 5 MB and can select image png , jpg and pdf",
+
+                      children: [
+                        TextFormField(
+                            validator: _formFieldState == null ||
+                                    _formFieldState?.value == "hide"
+                                ? null
+                                : (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter name';
+                                    }
+                                    return null;
+                                  },
+                            decoration: const InputDecoration(
+                              labelText: 'Name',
+                              border: OutlineInputBorder(),
+                            ))
+                      ],
+                    ),
+                  ),
                 ),
-                // const SizedBox(
-                //   height: 10,
-                // ),
-                // const Text("end of form"),
                 const SizedBox(
                   height: 20,
                 ),
+                ElevatedButton(
+                    onPressed: () async {
+                      await TBIBUploaderFormField.hideOrShowWidget(
+                          _formFieldState!);
+                      setState(() {});
+                    },
+                    child: const Text('Hide')),
                 Align(
                   alignment: Alignment.center,
                   child: ElevatedButton(
                       onPressed: () async {
-                        log(_formKey.currentState!.validate().toString());
+                        _formKey.currentState?.reset();
+                        log("form valid ${_formKey.currentState!.validate().toString()} - ${_formFieldState?.value}");
                         if (_formKey.currentState!.validate()) {
+                          if (_formFieldState?.value == "hide") {
+                            return;
+                          }
+
                           Map<String, dynamic> dataApi =
                               await TBIBFileUploader()
                                   .startUploadFileWithResponse(
