@@ -51,7 +51,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hide = false;
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  FormFieldState<String?>? _formFieldState;
+  FormFieldState<Map<String, dynamic>?>? _formFieldState;
+  final TextEditingController _nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -88,7 +89,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     decoration: BoxDecoration(
                         border: Border.all(
                             color: Colors.blueAccent,
-                            width: _formFieldState?.value == "hide" ? 0 : 1),
+                            width: _formFieldState?.value != null &&
+                                    _formFieldState!.value!['isHide'] == true
+                                ? 0
+                                : 1),
                         borderRadius: BorderRadius.circular(30)),
                     child: TBIBUploaderFormField(
                       state: ({required state}) {
@@ -135,6 +139,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       children: [
                         TextFormField(
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            controller: _nameController,
                             validator: _formFieldState == null ||
                                     _formFieldState?.value == "hide"
                                 ? null
@@ -157,6 +164,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 ElevatedButton(
                     onPressed: () async {
+                      _formKey.currentState?.reset();
+
                       await TBIBUploaderFormField.hideOrShowWidget(
                           _formFieldState!);
                       setState(() {});
@@ -166,7 +175,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   alignment: Alignment.center,
                   child: ElevatedButton(
                       onPressed: () async {
-                        _formKey.currentState?.reset();
                         log("form valid ${_formKey.currentState!.validate().toString()} - ${_formFieldState?.value}");
                         if (_formKey.currentState!.validate()) {
                           if (_formFieldState?.value == "hide") {
