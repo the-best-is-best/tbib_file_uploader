@@ -52,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   FormFieldState<Map<String, dynamic>?>? _formFieldState;
-  final TextEditingController _nameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -140,9 +139,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       children: [
                         TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          controller: TextEditingController(),
+                          validator: _formFieldState == null ||
+                                  _formFieldState?.value == "hide"
+                              ? null
+                              : (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter name';
+                                  }
+                                  return null;
+                                },
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                          ),
+                        ),
+                        TextFormField(
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
-                            controller: _nameController,
+                            controller: TextEditingController(),
                             validator: _formFieldState == null ||
                                     _formFieldState?.value == "hide"
                                 ? null
@@ -176,8 +191,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ElevatedButton(
                       onPressed: () async {
                         log("form valid ${_formKey.currentState!.validate().toString()} - ${_formFieldState?.value}");
-                        var valid =
-                            TBIBUploaderFormField.validation(_formFieldState!);
+                        var valid = TBIBUploaderFormField.validation(
+                            [_formFieldState!]);
                         if (valid) {
                           if (_formKey.currentState!.validate()) {
                             if (_formFieldState?.value != null &&

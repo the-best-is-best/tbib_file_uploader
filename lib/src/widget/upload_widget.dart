@@ -37,7 +37,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
             var data = <String, dynamic>{};
 
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_isShow) {
+              if (_isFirst) {
                 data = <String, dynamic>{
                   'path': null,
                   'name': null,
@@ -238,6 +238,12 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                   },
                                   Column(
                                     children: children.asMap().entries.map((e) {
+                                      final index = e.key;
+                                      // final var item = e.value;
+                                      final isLast =
+                                          index == children.length - 1;
+                                      log('last index ${children.length - 1}');
+
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
                                           vertical: 20,
@@ -245,45 +251,47 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                         child: (e.value is TextFormField)
                                             ? Builder(
                                                 builder: (context) {
-                                                  final isValid =
-                                                      (e.value as TextFormField)
-                                                              .validator
-                                                              ?.call(
-                                                                (e.value
-                                                                        as TextFormField)
-                                                                    .controller!
-                                                                    .text,
-                                                              ) ==
-                                                          null;
-                                                  log('is children valid $isValid');
+                                                  if (e is TextFormField &&
+                                                      (e as TextFormField)
+                                                              .controller ==
+                                                          null) {
+                                                    throw Exception(
+                                                      'Please add controller to TextFormField',
+                                                    );
+                                                  }
+                                                  final invalidTextFields = children
+                                                      .where(
+                                                        (widget) =>
+                                                            widget
+                                                                is TextFormField &&
+                                                            widget.validator
+                                                                    ?.call(
+                                                                  widget
+                                                                      .controller
+                                                                      ?.text,
+                                                                ) !=
+                                                                null,
+                                                      )
+                                                      .cast<TextFormField>()
+                                                      .toList(); // Get list of invalid TextFormField
 
-                                                  log('new data $data');
-
-                                                  if (!isValid) {
-                                                    if (_widgetErrors <
-                                                        children.length) {
-                                                      _widgetErrors += 1;
-                                                      WidgetsBinding.instance
-                                                          .addPostFrameCallback(
-                                                              (timeStamp) {
-                                                        formState.didChange(
-                                                          data,
-                                                        );
-                                                        _isFirst = false;
-                                                      });
-                                                    }
-                                                  } else {
-                                                    if (_widgetErrors > 0) {
-                                                      _widgetErrors -= 1;
-                                                      WidgetsBinding.instance
-                                                          .addPostFrameCallback(
-                                                              (timeStamp) {
-                                                        formState.didChange(
-                                                          data,
-                                                        );
-                                                        _isFirst = false;
-                                                      });
-                                                    }
+                                                  _widgetErrors =
+                                                      invalidTextFields.length;
+                                                  if (isLast &&
+                                                      _widgetErrors !=
+                                                          _oldWidgetsError) {
+                                                    _oldWidgetsError =
+                                                        _widgetErrors;
+                                                    WidgetsBinding.instance
+                                                        .addPostFrameCallback(
+                                                            (timeStamp) {
+                                                      formState.didChange({});
+                                                    });
+                                                    WidgetsBinding.instance
+                                                        .addPostFrameCallback(
+                                                            (timeStamp) {
+                                                      formState.didChange({});
+                                                    });
                                                   }
                                                   return e.value
                                                       as TextFormField;
@@ -307,70 +315,67 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
           },
         );
 
-  /// [validation] is a function to validate form field.
-  static bool validation(FormFieldState<Map<String, dynamic>?> formState) {
-    final value = formState.value;
-    value!['showError'] = true;
-    formState.didChange(value);
-    return formState.validate();
-  }
+  /// Select File data
+  final void Function({String? path, String? name})? selectedFile;
 
-  static bool _isShow = true;
-  static bool _isFirst = true;
+  /// [downloadFileOnPressed] if [canDownloadFile] is true, you can download f
+  /// ile after upload.
+  final void Function()? downloadFileOnPressed;
 
-  static final _tbibUplaoderFocusNode = FocusNode();
-  static final _widgetKey = GlobalKey();
+  /// [allowedExtensions] if use select from storage will display only this extensions.
+  final List<String>? allowedExtensions;
+
+  /// [canDownloadFile] if true, you can download file after upload.
+  final bool canDownloadFile;
+
+  /// [changeFileNameTo] Change file name after selected
+  final String? changeFileNameTo;
+
+  /// [children] is a list of widgets to display.
+  final List<Widget> children;
+
+  /// [displayNote] to display note.
+  final String? displayNote;
+
+  /// [hide] is a bool to hide the widget work in init.
+  final bool hide;
+
+  /// [imageQuality] is a number between 0 and 100.
+  final int? imageQuality;
+
+  /// [maxFileSize] by MB.
+  final int? maxFileSize;
+
+  /// [selectImageOnly] is a bool to select image only.
+  final bool selectImageOnly;
+
+  /// [showFileName] is a bool to show file name work
+  /// if you change file name from [changeFileNameTo].
+  final bool showFileName;
+
+  /// [state] is a function to get the state of the form field.
+  final void Function({required FormFieldState<Map<String, dynamic>?> state})
+      state;
+
+  /// File Uploader Style
+  final TBIBUploaderStyle? style;
+
   static final _animatedContainerKey = GlobalKey();
-  static int _widgetErrors = 0;
 
+  // static bool _refresh = false;
   static late double _heightWidget;
-  static late double _widthWidget;
-  static bool _hideWidthWidget = false;
-  // static bool _returnFromHide = false;
-
-  static Future<void> _selectFileOrImage(
-    BuildContext context,
-    int? maxFileSize,
-    FormFieldState<Map<String, dynamic>?> state,
-    void Function({String? name, String? path})? selectedFile,
-    String? changeFileNameTo,
-    List<String>? allowedExtensions,
-    int? imageQuality,
-    bool selectImageOnly,
-  ) async {
-    await showModalBottomSheet<String>(
-      context: context,
-      builder: (context) {
-        return SelectFile(
-          selectImageOnly: selectImageOnly,
-          imageQuality: imageQuality,
-          maxFileSize: maxFileSize,
-          changeFileNameTo: changeFileNameTo,
-          allowedExtensions: allowedExtensions,
-          selectFileOrImage: ({path, name, error}) {
-            // log('path $path name $name error $error');
-            if (path != null || error != null) {
-              // Map<String, dynamic> newData = {};
-              state.didChange(
-                {
-                  'path': path,
-                  'name': name,
-                  'error': error,
-                  'isHide': false,
-                  'showError': true
-                },
-              );
-            } else {
-              state.didChange(null);
-            }
-            selectedFile?.call(name: name, path: path);
-          },
-        );
-      },
-    );
-  }
-
   static bool _hideFromFunction = false;
+  static bool _hideWidthWidget = false;
+  static bool _isFirst = true;
+  static bool _isShow = true;
+  // static final bool _needRefresh = false;
+  static final _tbibUplaoderFocusNode = FocusNode();
+
+  static int _widgetErrors = 0;
+  static int _oldWidgetsError = 0;
+
+  static final _widgetKey = GlobalKey();
+  static late double _widthWidget;
 
   /// [hideOrShowWidget] is a function to hide or show widget by button.
   static Future<void> hideOrShowWidget(
@@ -422,48 +427,60 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
     }
   }
 
-  /// File Uploader Style
-  final TBIBUploaderStyle? style;
+  /// [validation] is a function to validate form field.
+  static bool validation(
+    List<FormFieldState<Map<String, dynamic>?>> formState,
+  ) {
+    for (final element in formState) {
+      final value = element.value;
+      value!['showError'] = true;
+      element.didChange(value);
+    }
 
-  /// Select File data
-  final void Function({String? path, String? name})? selectedFile;
+    return formState.any((element) => element.validate());
+  }
 
-  /// [changeFileNameTo] Change file name after selected
-  final String? changeFileNameTo;
+  // static bool _returnFromHide = false;
 
-  /// [maxFileSize] by MB.
-  final int? maxFileSize;
-
-  /// [canDownloadFile] if true, you can download file after upload.
-  final bool canDownloadFile;
-
-  /// [downloadFileOnPressed] if [canDownloadFile] is true, you can download f
-  /// ile after upload.
-  final void Function()? downloadFileOnPressed;
-
-  /// [displayNote] to display note.
-  final String? displayNote;
-
-  /// [allowedExtensions] if use select from storage will display only this extensions.
-  final List<String>? allowedExtensions;
-
-  /// [showFileName] is a bool to show file name work
-  /// if you change file name from [changeFileNameTo].
-  final bool showFileName;
-
-  /// [imageQuality] is a number between 0 and 100.
-  final int? imageQuality;
-
-  /// [selectImageOnly] is a bool to select image only.
-  final bool selectImageOnly;
-
-  /// [children] is a list of widgets to display.
-  final List<Widget> children;
-
-  /// [hide] is a bool to hide the widget work in init.
-  final bool hide;
-
-  /// [state] is a function to get the state of the form field.
-  final void Function({required FormFieldState<Map<String, dynamic>?> state})
-      state;
+  static Future<void> _selectFileOrImage(
+    BuildContext context,
+    int? maxFileSize,
+    FormFieldState<Map<String, dynamic>?> state,
+    void Function({String? name, String? path})? selectedFile,
+    String? changeFileNameTo,
+    List<String>? allowedExtensions,
+    int? imageQuality,
+    bool selectImageOnly,
+  ) async {
+    await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) {
+        return SelectFile(
+          selectImageOnly: selectImageOnly,
+          imageQuality: imageQuality,
+          maxFileSize: maxFileSize,
+          changeFileNameTo: changeFileNameTo,
+          allowedExtensions: allowedExtensions,
+          selectFileOrImage: ({path, name, error}) {
+            // log('path $path name $name error $error');
+            if (path != null || error != null) {
+              // Map<String, dynamic> newData = {};
+              state.didChange(
+                {
+                  'path': path,
+                  'name': name,
+                  'error': error,
+                  'isHide': false,
+                  'showError': true
+                },
+              );
+            } else {
+              state.didChange(null);
+            }
+            selectedFile?.call(name: name, path: path);
+          },
+        );
+      },
+    );
+  }
 }
