@@ -101,7 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       maxFileSize: 5,
 
                       validator: _formFieldState == null ||
-                              _formFieldState?.value == "hide"
+                              _formFieldState?.value != null &&
+                                  _formFieldState!.value!['isHide'] == true
                           ? null
                           : (value) {
                               if (selectedFile == null) {
@@ -153,7 +154,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                   },
                             decoration: const InputDecoration(
                               labelText: 'Name',
-                              border: OutlineInputBorder(),
                             ))
                       ],
                     ),
@@ -176,34 +176,39 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: ElevatedButton(
                       onPressed: () async {
                         log("form valid ${_formKey.currentState!.validate().toString()} - ${_formFieldState?.value}");
-                        if (_formKey.currentState!.validate()) {
-                          if (_formFieldState?.value == "hide") {
-                            return;
-                          }
+                        var valid =
+                            TBIBUploaderFormField.validation(_formFieldState!);
+                        if (valid) {
+                          if (_formKey.currentState!.validate()) {
+                            if (_formFieldState?.value != null &&
+                                _formFieldState!.value!['isHide'] == true) {
+                              return;
+                            }
 
-                          Map<String, dynamic> dataApi =
-                              await TBIBFileUploader()
-                                  .startUploadFileWithResponse(
-                            dio: Dio(
-                              BaseOptions(
-                                baseUrl: 'https://api.escuelajs.co/api/v1/',
-                              ),
-                            ),
-                            pathApi: 'files/upload',
-                            method: 'POST',
-                            yourData: FormData.fromMap(
-                              {
-                                'file': MultipartFile.fromFileSync(
-                                  selectedFile!.path,
-                                  filename: selectedFile!.path
-                                      .split(Platform.pathSeparator)
-                                      .last,
+                            Map<String, dynamic> dataApi =
+                                await TBIBFileUploader()
+                                    .startUploadFileWithResponse(
+                              dio: Dio(
+                                BaseOptions(
+                                  baseUrl: 'https://api.escuelajs.co/api/v1/',
                                 ),
-                              },
-                            ),
-                          );
-                          var res = ApiModel.fromMap(dataApi);
-                          log(res.toJson());
+                              ),
+                              pathApi: 'files/upload',
+                              method: 'POST',
+                              yourData: FormData.fromMap(
+                                {
+                                  'file': MultipartFile.fromFileSync(
+                                    selectedFile!.path,
+                                    filename: selectedFile!.path
+                                        .split(Platform.pathSeparator)
+                                        .last,
+                                  ),
+                                },
+                              ),
+                            );
+                            var res = ApiModel.fromMap(dataApi);
+                            log(res.toJson());
+                          }
                         }
                       },
                       child: const Text('Submit')),

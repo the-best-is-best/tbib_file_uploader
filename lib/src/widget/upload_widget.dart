@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -15,7 +14,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
     // super.onSaved,
     super.validator,
     super.initialValue,
-    // super.autovalidateMode = AutovalidateMode.disabled,
+    super.autovalidateMode = AutovalidateMode.always,
     super.enabled = true,
     super.restorationId,
     this.style,
@@ -35,25 +34,35 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
           builder: (FormFieldState<Map<String, dynamic>?> formState) {
             state(state: formState);
             var textEditingController = TextEditingController();
-            final data = <String, dynamic>{
-              'path': null,
-              'name': null,
-              'error': null,
-              'isHide': hide
-            };
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (_isFirst) {
-                _hideWidthWidget = hide;
-                _hideFromFunction = hide;
-                final renderBox =
-                    _widgetKey.currentContext?.findRenderObject() as RenderBox;
-                _heightWidget = renderBox.size.height;
-                _widthWidget = renderBox.size.width;
-                _isFirst = false;
+            var data = <String, dynamic>{};
 
-                formState.didChange(data);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_isShow) {
+                data = <String, dynamic>{
+                  'path': null,
+                  'name': null,
+                  'error': null,
+                  'isHide': hide,
+                  'showError': false
+                };
+                if (_isFirst) {
+                  _hideWidthWidget = hide;
+                  _hideFromFunction = hide;
+                  final renderBox = _widgetKey.currentContext
+                      ?.findRenderObject() as RenderBox;
+                  _heightWidget = renderBox.size.height;
+                  _widthWidget = renderBox.size.width;
+                  _isFirst = false;
+
+                  formState.didChange(data);
+                }
               } else {}
             });
+            if (formState.value != null &&
+                formState.value!['showError'] == true) {
+              data = formState.value!;
+              data['error'] = formState.errorText;
+            }
             // log('form state ${formState.value}');
             if (formState.value != null && formState.value!['isHide'] == true) {
             } else {
@@ -62,19 +71,12 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                   FocusManager.instance.primaryFocus?.unfocus();
                 }
               });
+            }
 
-              if (formState.hasError) {
-                data['error'] = formState.errorText;
-              }
-              // else {
-              //   // log('message ${state.value}');
-              //   log('form value is ${formState.value}');
-              //   if (formState.value != null) {
-              //     if (formState.value is Map) {
-              //       data = formState.value;
-              //     }
-              //   }
-              // }
+            if (formState.hasError &&
+                formState.value != null &&
+                formState.value!['showError'] == true &&
+                _isShow) {
               log('path ${data['path'] != null ? showFileName && changeFileNameTo != null ? (data['path'] as String).split('/').last : 'File Selected' : ''}');
               textEditingController = TextEditingController(
                 text: data['path'] != null
@@ -85,7 +87,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
               );
             }
             log('error ${data['error']}');
-
+            log('data $data');
             return AnimatedOpacity(
               key: _widgetKey,
               opacity: (hide && _isFirst)
@@ -101,7 +103,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                 child: SizeChangedLayoutNotifier(
                   child: Builder(
                     builder: (context) {
-                      log('hideWidthWidget $_hideWidthWidget - widgetErrors $widgetErrors');
+                      log('hideWidthWidget $_hideWidthWidget - widgetErrors $_widgetErrors');
                       return AnimatedContainer(
                         key: _animatedContainerKey,
                         duration: const Duration(milliseconds: 300),
@@ -112,7 +114,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                 : _hideFromFunction
                                     ? 0
                                     : _heightWidget +
-                                        (30 * widgetErrors) +
+                                        (30 * _widgetErrors) +
                                         (data['error'] != null ? 30 : 0),
                         width: _isFirst
                             ? null
@@ -127,6 +129,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                   const EdgeInsets.only(top: 20),
                           child: Builder(
                             builder: (context) {
+                              log('showError is  ${data['showError']} - error ${data['error']}');
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -160,11 +163,13 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                           : style.hideBorder
                                               ? InputBorder.none
                                               : null,
-                                      errorText: (data['error']
-                                              .toString()
-                                              .contains('null')
+                                      errorText: data['showError'] == false
                                           ? null
-                                          : data['error'].toString()),
+                                          : (data['error']
+                                                  .toString()
+                                                  .contains('null')
+                                              ? null
+                                              : data['error'].toString()),
                                       labelText:
                                           style?.labelText ?? 'Select File',
                                       hintText: 'Select FileS',
@@ -251,27 +256,32 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                                               ) ==
                                                           null;
                                                   log('is children valid $isValid');
+
+                                                  log('new data $data');
+
                                                   if (!isValid) {
-                                                    if (widgetErrors <
+                                                    if (_widgetErrors <
                                                         children.length) {
-                                                      widgetErrors += 1;
+                                                      _widgetErrors += 1;
                                                       WidgetsBinding.instance
                                                           .addPostFrameCallback(
                                                               (timeStamp) {
                                                         formState.didChange(
-                                                          formState.value,
+                                                          data,
                                                         );
+                                                        _isFirst = false;
                                                       });
                                                     }
                                                   } else {
-                                                    if (widgetErrors > 0) {
-                                                      widgetErrors -= 1;
+                                                    if (_widgetErrors > 0) {
+                                                      _widgetErrors -= 1;
                                                       WidgetsBinding.instance
                                                           .addPostFrameCallback(
                                                               (timeStamp) {
                                                         formState.didChange(
-                                                          formState.value,
+                                                          data,
                                                         );
+                                                        _isFirst = false;
                                                       });
                                                     }
                                                   }
@@ -296,15 +306,27 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
             );
           },
         );
+
+  /// [validation] is a function to validate form field.
+  static bool validation(FormFieldState<Map<String, dynamic>?> formState) {
+    final value = formState.value;
+    value!['showError'] = true;
+    formState.didChange(value);
+    return formState.validate();
+  }
+
+  static bool _isShow = true;
   static bool _isFirst = true;
+
   static final _tbibUplaoderFocusNode = FocusNode();
   static final _widgetKey = GlobalKey();
   static final _animatedContainerKey = GlobalKey();
-  static int widgetErrors = 0;
+  static int _widgetErrors = 0;
 
   static late double _heightWidget;
   static late double _widthWidget;
   static bool _hideWidthWidget = false;
+  // static bool _returnFromHide = false;
 
   static Future<void> _selectFileOrImage(
     BuildContext context,
@@ -328,10 +350,15 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
           selectFileOrImage: ({path, name, error}) {
             // log('path $path name $name error $error');
             if (path != null || error != null) {
+              // Map<String, dynamic> newData = {};
               state.didChange(
-                json.decode(
-                  {'path': path, 'name': name, 'error': error}.toString(),
-                ) as Map<String, dynamic>,
+                {
+                  'path': path,
+                  'name': name,
+                  'error': error,
+                  'isHide': false,
+                  'showError': true
+                },
               );
             } else {
               state.didChange(null);
@@ -351,18 +378,46 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   ) async {
     if (!_hideFromFunction) {
       _hideFromFunction = !_hideFromFunction;
-      state.didChange({'isHide': true});
+      state.didChange(
+        {
+          'path': null,
+          'name': null,
+          'error': null,
+          'isHide': true,
+          'showError': false
+        },
+      );
       await Future.delayed(const Duration(milliseconds: 500), () {
         _hideWidthWidget = _hideFromFunction;
-        state.didChange({'isHide': true});
+        state.didChange({
+          'path': null,
+          'name': null,
+          'error': null,
+          'isHide': true,
+          'showError': false
+        });
+        _isShow = false;
       });
     } else {
       _hideWidthWidget = !_hideWidthWidget;
-      state.didChange({'isHide': false});
+      state.didChange({
+        'path': null,
+        'name': null,
+        'error': null,
+        'isHide': false,
+        'showError': false
+      });
 
       await Future.delayed(const Duration(milliseconds: 500), () {
         _hideFromFunction = _hideWidthWidget;
-        state.didChange({'isHide': false});
+        state.didChange({
+          'path': null,
+          'name': null,
+          'error': null,
+          'isHide': false,
+          'showError': false
+        });
+        _isShow = true;
       });
     }
   }
@@ -408,6 +463,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   /// [hide] is a bool to hide the widget work in init.
   final bool hide;
 
+  /// [state] is a function to get the state of the form field.
   final void Function({required FormFieldState<Map<String, dynamic>?> state})
       state;
 }
