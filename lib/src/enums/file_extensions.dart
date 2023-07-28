@@ -1,0 +1,47 @@
+/// File extensions
+// ignore_for_file: constant_identifier_names
+
+enum FileExtensions {
+  PDF,
+  DOC,
+  DOCX,
+  XLS,
+  XLSX,
+  PPT,
+  PPTX,
+  TXT,
+
+  MP4,
+  MP3,
+  WAV,
+  AVI,
+  MOV,
+  WMV,
+  FLV,
+  MKV,
+  WEBM,
+  ZIP,
+  RAR,
+  TAR,
+  GZ,
+  TGZ,
+  BZ2,
+  TBZ2,
+  ISO,
+  APK,
+  EXE,
+  DMG,
+  BIN,
+  IMG,
+  CSV,
+
+  WEBP,
+  OGG,
+  MPA,
+  JPG,
+  JPEG,
+  PNG,
+  GIF,
+  SVG,
+  bmp
+}

@@ -12,6 +12,7 @@ class TBIBUploaderStyle {
     this.noteStyle,
     this.hideBorder = false,
     this.padding,
+    // this.showDefaultNote = true,
   });
 
   /// Label Text
@@ -31,6 +32,9 @@ class TBIBUploaderStyle {
 
   /// add style to note
   final TextStyle? noteStyle;
+
+  /// [showDefaultNote] is a boolean to show default note.
+  // final bool showDefaultNote;
 
   /// hide border of text field
   final bool hideBorder;

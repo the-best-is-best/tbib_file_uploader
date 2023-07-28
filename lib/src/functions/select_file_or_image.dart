@@ -5,11 +5,14 @@ import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 Future<void> selectFileOrImage({
   required BuildContext context,
   required void Function({String? name, String? path}) selectedFile,
+  required bool selectFile,
+  required bool selectImageCamera,
+  required bool selectImageGallery,
   int? maxFileSize,
   String? changeFileNameTo,
-  List<String>? allowedExtensions,
+  List<FileExtensions>? allowedExtensions,
   int? imageQuality,
-  bool selectImageOnly = false,
+  FileType? fileType,
 }) async {
   await showModalBottomSheet<String>(
     context: context,
@@ -18,8 +21,12 @@ Future<void> selectFileOrImage({
         imageQuality: imageQuality,
         maxFileSize: maxFileSize,
         changeFileNameTo: changeFileNameTo,
-        allowedExtensions: allowedExtensions,
-        selectImageOnly: selectImageOnly,
+        selectImageCamera: selectImageCamera,
+        selectImageGallery: selectImageGallery,
+        selectFile: selectFile,
+        allowedExtensions:
+            allowedExtensions?.map((e) => '.${e.name.toLowerCase()}').toList(),
+        fileType: fileType,
         selectFileOrImage: ({path, name, error}) {
           if (path != null || error != null) {
             selectedFile(name: name, path: path);

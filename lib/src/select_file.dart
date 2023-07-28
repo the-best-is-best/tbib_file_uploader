@@ -1,6 +1,10 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:tbib_file_uploader/src/functions/select_file.dart';
 import 'package:tbib_file_uploader/src/functions/select_image_camera.dart';
+import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 /// A [Select File] that contains a [FileUploader].
 class SelectFile extends StatefulWidget {
@@ -12,7 +16,10 @@ class SelectFile extends StatefulWidget {
     required this.changeFileNameTo,
     required this.allowedExtensions,
     required this.imageQuality,
-    required this.selectImageOnly,
+    required this.selectImageCamera,
+    required this.selectImageGallery,
+    required this.selectFile,
+    required this.fileType,
     super.key,
   });
 
@@ -32,17 +39,55 @@ class SelectFile extends StatefulWidget {
   /// [imageQuality] is a number between 0 and 100.
   final int? imageQuality;
 
-  /// [selectImageOnly] is a bool to select image only.
-  final bool selectImageOnly;
+  // /// [selectImageOnly] is a bool to select image only.
+  // final bool selectImageOnly;
+  /// [selectImageCamera] is a bool to select image from camera.
+  final bool selectImageCamera;
+
+  /// [selectImageGallery] is a bool to select image from gallery.
+  final bool selectImageGallery;
+
+  /// [selectFile] is a bool to select file.
+  final bool selectFile;
 
   /// [allowedExtensions] is a list of allowed extensions.
   final List<String>? allowedExtensions;
+
+  /// [fileType] is a FileType.
+  final FileType? fileType;
 
   @override
   State<SelectFile> createState() => _SelectFileState();
 }
 
 class _SelectFileState extends State<SelectFile> {
+  bool isImage = true;
+  bool isFiles = true;
+  @override
+  void initState() {
+    isImage = widget.allowedExtensions?.any(
+          (element) =>
+              element.toUpperCase().contains('JPG') ||
+              element.toUpperCase().contains('JPEG') ||
+              element.toUpperCase().contains('GIF') ||
+              element.toUpperCase().contains('SVG') ||
+              element.toUpperCase().contains('BMP'),
+        ) ??
+        true;
+    isFiles = widget.allowedExtensions?.any(
+          (element) =>
+              !element.toUpperCase().contains('JPG') &&
+              !element.toUpperCase().contains('JPEG') &&
+              !element.toUpperCase().contains('GIF') &&
+              !element.toUpperCase().contains('SVG') &&
+              !element.toUpperCase().contains('BMP'),
+        ) ??
+        false;
+    log('is file $isFiles');
+    log(widget.allowedExtensions?.first ?? '');
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Builder(
@@ -55,7 +100,8 @@ class _SelectFileState extends State<SelectFile> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!widget.selectImageOnly)
+              if ((!Platform.isIOS && widget.selectFile) ||
+                  (Platform.isIOS && isFiles))
                 TextButton.icon(
                   style: TextButton.styleFrom(
                     minimumSize: Size(size.width, 30),
@@ -79,6 +125,7 @@ class _SelectFileState extends State<SelectFile> {
                       maxSize: widget.maxFileSize,
                       changeFileNameTo: widget.changeFileNameTo,
                       allowedExtensions: widget.allowedExtensions,
+                      fileType: widget.fileType,
                     );
                     return widget.selectFileOrImage(
                       path: file.path,
@@ -88,68 +135,72 @@ class _SelectFileState extends State<SelectFile> {
                   },
                   icon: const Icon(Icons.sd_storage),
                 ),
-              const SizedBox(height: 10),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  minimumSize: Size(size.width, 30),
-                ),
-                label: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Gallery',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
+              if (widget.selectImageGallery && isImage) ...{
+                const SizedBox(height: 10),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    minimumSize: Size(size.width, 30),
+                  ),
+                  label: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Gallery',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () async {
-                  Navigator.pop(context);
+                  onPressed: () async {
+                    Navigator.pop(context);
 
-                  final image = await selectImageGalleryAsync(
-                    maxSize: widget.maxFileSize,
-                    changeFileNameTo: widget.changeFileNameTo,
-                    imageQuality: widget.imageQuality,
-                  );
-                  return widget.selectFileOrImage(
-                    path: image.path,
-                    name: image.name,
-                    error: image.error,
-                  );
-                },
-                icon: const Icon(Icons.image),
-              ),
-              const SizedBox(height: 10),
-              TextButton.icon(
-                style: TextButton.styleFrom(
-                  minimumSize: Size(size.width, 30),
+                    final image = await selectImageGalleryAsync(
+                      maxSize: widget.maxFileSize,
+                      changeFileNameTo: widget.changeFileNameTo,
+                      imageQuality: widget.imageQuality,
+                    );
+                    return widget.selectFileOrImage(
+                      path: image.path,
+                      name: image.name,
+                      error: image.error,
+                    );
+                  },
+                  icon: const Icon(Icons.image),
                 ),
-                label: const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Camera',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
+              },
+              if (widget.selectImageCamera && isImage) ...{
+                const SizedBox(height: 10),
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    minimumSize: Size(size.width, 30),
+                  ),
+                  label: const Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Camera',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                ),
-                onPressed: () async {
-                  Navigator.pop(context);
+                  onPressed: () async {
+                    Navigator.pop(context);
 
-                  final image = await selectImageCameraAsync(
-                    maxSize: widget.maxFileSize,
-                    changeFileNameTo: widget.changeFileNameTo,
-                    imageQuality: widget.imageQuality,
-                  );
-                  return widget.selectFileOrImage(
-                    path: image.path,
-                    name: image.name,
-                    error: image.error,
-                  );
-                },
-                icon: const Icon(Icons.camera_enhance),
-              ),
+                    final image = await selectImageCameraAsync(
+                      maxSize: widget.maxFileSize,
+                      changeFileNameTo: widget.changeFileNameTo,
+                      imageQuality: widget.imageQuality,
+                    );
+                    return widget.selectFileOrImage(
+                      path: image.path,
+                      name: image.name,
+                      error: image.error,
+                    );
+                  },
+                  icon: const Icon(Icons.camera_enhance),
+                ),
+              },
               const SizedBox(height: 30),
             ],
           ),

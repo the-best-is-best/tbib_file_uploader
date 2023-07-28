@@ -1,16 +1,19 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as xpath;
+import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 /// select file from  file picker
 /// [maxSize] is in MB
 Future<({String? path, String? name, String? error})> selectFileAsync({
   required List<String>? allowedExtensions,
   required String? changeFileNameTo,
+  required FileType? fileType,
   int? maxSize,
 }) async {
   final file = await FilePicker.platform.pickFiles(
-    type: allowedExtensions == null ? FileType.any : FileType.custom,
+    type: fileType != null && allowedExtensions == null
+        ? fileType
+        : (allowedExtensions == null ? FileType.any : FileType.custom),
     allowedExtensions: allowedExtensions,
   );
   if (file?.files == null) {

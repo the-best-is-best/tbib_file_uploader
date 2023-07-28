@@ -1,9 +1,18 @@
+## 1.0.1
+
+- support add children for form and hide or show this with animation
+- now if you make displayNote: '' will display default note
+- add choose user can select file or image form gallery or camera
+- file extension now in enum
+- file type solved can add it
+- auto hide file picker from storage in ios if extensions only images
+
 ## 1.0.0
 
-* Stable version.
-* solve file name not change and can't display it
-* add image quality for image picker support
+- Stable version.
+- solve file name not change and can't display it
+- add image quality for image picker support
   
 ## 0.0.2
 
-* init package.
+- init package.

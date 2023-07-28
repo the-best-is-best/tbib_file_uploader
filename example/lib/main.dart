@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:example/src/api_model.dart';
 import 'package:example/theme.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hide = false;
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  FormFieldState<Map<String, dynamic>?>? _formFieldState;
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -70,136 +68,166 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                StatefulBuilder(
-                  // Listen to changes in the ValueNotifier
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Center(
+            // Center is a layout widget. It takes a single child and positions it
+            // in the middle of the parent.
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    children: [
+                      Builder(builder: (context) {
+                        bool isHide = false;
+                        return StatefulBuilder(
+                          // Listen to changes in the ValueNotifier
 
-                  builder: (_, setState) => Container(
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                            color: Colors.blueAccent,
-                            width: _formFieldState?.value != null &&
-                                    _formFieldState!.value!['isHide'] == true
-                                ? 0
-                                : 1),
-                        borderRadius: BorderRadius.circular(30)),
-                    child: TBIBUploaderFormField(
-                      state: ({required state}) {
-                        _formFieldState = state;
-                      },
-                      maxFileSize: 5,
-
-                      validator: _formFieldState == null ||
-                              _formFieldState?.value != null &&
-                                  _formFieldState!.value!['isHide'] == true
-                          ? null
-                          : (value) {
-                              if (selectedFile == null) {
-                                return 'Please select file';
-                              }
-
-                              return null;
-                            },
-                      selectedFile: ({name, path}) {
-                        if (path != null) {
-                          selectedFile = File(path);
-                        } else {
-                          selectedFile = null;
-                        }
-                        setState(() {});
-                      },
-                      style: const TBIBUploaderStyle(
-                          labelText: 'Please select file'),
-                      showFileName: true,
-                      imageQuality: 50,
-                      canDownloadFile: true,
-                      hide: true,
-                      // hideBorder: true,
-                      //changeFileNameTo: 'doc_1',
-                      allowedExtensions: const [
-                        'png',
-                        'jpg',
-                        'pdf',
-                        'xls',
-                        'xlsx',
-                      ],
-
-                      displayNote:
-                          "Note: File size should be less than 5 MB and can select image png , jpg and pdf",
-
-                      children: [
-                        TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          controller: TextEditingController(),
-                          validator: _formFieldState == null ||
-                                  _formFieldState?.value == "hide"
-                              ? null
-                              : (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter name';
-                                  }
-                                  return null;
-                                },
-                          decoration: const InputDecoration(
-                            labelText: 'Name',
-                          ),
-                        ),
-                        TextFormField(
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            controller: TextEditingController(),
-                            validator: _formFieldState == null ||
-                                    _formFieldState?.value == "hide"
-                                ? null
-                                : (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter name';
+                          builder: (_, builderSetState) => Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Text('Show or hide widget'),
+                                  Switch.adaptive(
+                                      value: !isHide,
+                                      onChanged: (v) {
+                                        builderSetState(() {
+                                          isHide = !isHide;
+                                        });
+                                      }),
+                                ],
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.blueAccent,
+                                        width: isHide ? 0 : 1),
+                                    borderRadius: BorderRadius.circular(30)),
+                                child: TBIBUploaderFile(
+                                  isHide: isHide,
+                                  validator: (p0) {
+                                    if (selectedFile == null) {
+                                      return 'Please select file';
                                     }
                                     return null;
                                   },
-                            decoration: const InputDecoration(
-                              labelText: 'Name',
-                            ))
-                      ],
-                    ),
+                                  allowedExtensions: const [
+                                    // FileExtensions.DOCX,
+                                    // FileExtensions.PDF,
+                                    FileExtensions.JPG,
+                                    // FileExtensions.PNG
+                                  ],
+                                  maxFileSize: 2,
+                                  fileType: FileType.image,
+                                  // displayNote: '',
+                                  // selectImageGallery: false,
+                                  // selectImageCamera: false,
+                                  selectedFile: ({name, path}) {
+                                    if (path == null) return;
+                                    log('selectedFile $name $path');
+                                    selectedFile = File(path);
+                                  },
+                                  children: [
+                                    TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter some text';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              // ElevatedButton(
+                              //     onPressed: () async {
+                              //       builderSetState(() {
+                              //         isHide = !isHide;
+                              //       });
+                              //     },
+                              //     child: const Text('Hide')),
+                            ],
+                          ),
+                        );
+                      }),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      Builder(builder: (context) {
+                        bool isHide = false;
+                        return StatefulBuilder(
+                          // Listen to changes in the ValueNotifier
+
+                          builder: (_, builderSetState) => Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Text('Show or hide widget'),
+                                  Switch.adaptive(
+                                      value: !isHide,
+                                      onChanged: (v) {
+                                        builderSetState(() {
+                                          isHide = !isHide;
+                                        });
+                                      }),
+                                ],
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.blueAccent,
+                                        width: isHide ? 0 : 1),
+                                    borderRadius: BorderRadius.circular(30)),
+                                child: TBIBUploaderFile(
+                                  isHide: isHide,
+                                  allowedExtensions: const [
+                                    FileExtensions.XLS,
+                                    FileExtensions.XLSX,
+                                    FileExtensions.JPEG,
+                                  ],
+                                  selectedFile: ({name, path}) {},
+                                  maxFileSize: 12,
+                                  style: const TBIBUploaderStyle(
+                                      labelText: 'Please select file 1'),
+                                  children: [
+                                    TextFormField(),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 20,
+                              ),
+                              // ElevatedButton(
+                              //     onPressed: () async {
+                              //       builderSetState(() {
+                              //         isHide = !isHide;
+                              //       });
+                              //     },
+                              //     child: const Text('Hide')),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
                   ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                    onPressed: () async {
-                      _formKey.currentState?.reset();
-
-                      await TBIBUploaderFormField.hideOrShowWidget(
-                          _formFieldState!);
-                      setState(() {});
-                    },
-                    child: const Text('Hide')),
-                Align(
-                  alignment: Alignment.center,
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        log("form valid ${_formKey.currentState!.validate().toString()} - ${_formFieldState?.value}");
-                        var valid = TBIBUploaderFormField.validation(
-                            [_formFieldState!]);
-                        if (valid) {
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: ElevatedButton(
+                        onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            if (_formFieldState?.value != null &&
-                                _formFieldState!.value!['isHide'] == true) {
-                              return;
-                            }
-
+                            if (selectedFile == null) return;
                             Map<String, dynamic> dataApi =
                                 await TBIBFileUploader()
                                     .startUploadFileWithResponse(
@@ -224,11 +252,11 @@ class _MyHomePageState extends State<MyHomePage> {
                             var res = ApiModel.fromMap(dataApi);
                             log(res.toJson());
                           }
-                        }
-                      },
-                      child: const Text('Submit')),
-                )
-              ],
+                        },
+                        child: const Text('Submit')),
+                  )
+                ],
+              ),
             ),
           ),
         ),
