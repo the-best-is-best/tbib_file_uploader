@@ -6,6 +6,7 @@
 - file extension now in enum
 - file type solved can add it
 - auto hide file picker from storage in ios if extensions only images
+- you can select file or image without form with (selectFileOrImage)
 
 ## 1.0.0
 

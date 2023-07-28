@@ -50,6 +50,22 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hide = false;
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      selectFileOrImage(
+          context: context,
+          selectedFile: ({String? name, String? path}) {
+            log('selectedFile: $name , $path');
+          },
+          selectFile: false,
+          selectImageCamera: true,
+          selectImageGallery: true);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done

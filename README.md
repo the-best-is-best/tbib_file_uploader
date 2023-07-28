@@ -47,3 +47,18 @@ void main() async {
 ```
 
 <h3>if you want to download file can use <a href="https://pub.dev/packages/tbib_downloader"> tbib downloader </a></h3>
+
+<h3> Note </h3>
+<p> you can use this function to pick file or image without widget  </p>
+
+```dart
+selectFileOrImage(
+          context: context,
+          selectedFile: ({String? name, String? path}) {
+            log('selectedFile: $name , $path');
+          },
+          selectFile: false,
+          selectImageCamera: true,
+          selectImageGallery: true);
+
+```
