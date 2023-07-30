@@ -1,3 +1,8 @@
+## 1.0.2
+
+- fix permission notification issue when not allowed with awesome notification
+- and apple can rejected app for that
+
 ## 1.0.1
 
 - support add children for form and hide or show this with animation

@@ -7,6 +7,7 @@ import 'dart:math' as math;
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tbib_file_uploader/src/service/format_bytes.dart';
 
 /// File Uploader Init
@@ -16,36 +17,43 @@ class TBIBFileUploader {
 
   /// File Uploader Init
   Future<void> init() async {
-    await AwesomeNotifications().requestPermissionToSendNotifications();
+    var permission = await Permission.notification.isGranted;
+    if (!permission) {
+      await Permission.notification.request();
+    }
+    permission = await Permission.notification.isGranted;
+    if (permission) {
+      await AwesomeNotifications().requestPermissionToSendNotifications();
 
-    await AwesomeNotifications().initialize(
-      null,
-      [
-        NotificationChannel(
-          icon: 'resource://drawable/ic_stat_upload',
-          channelKey: 'upload_channel',
-          importance: NotificationImportance.Max,
-          ledOffMs: 100,
-          ledOnMs: 500,
-          locked: true,
-          channelName: 'Upload notifications',
-          channelDescription: 'Upload channel for download progress',
-          defaultColor: Colors.black,
-          ledColor: Colors.white,
-          channelShowBadge: false,
-        ),
-        NotificationChannel(
-          icon: 'resource://drawable/ic_stat_file_upload_done',
-          importance: NotificationImportance.Max,
-          channelKey: 'upload_completed_channel',
-          channelName: 'Upload completed notifications',
-          channelDescription: 'Notification channel for download completed',
-          defaultColor: Colors.black,
-          ledColor: Colors.white,
-          channelShowBadge: false,
-        ),
-      ],
-    );
+      await AwesomeNotifications().initialize(
+        null,
+        [
+          NotificationChannel(
+            icon: 'resource://drawable/ic_stat_upload',
+            channelKey: 'upload_channel',
+            importance: NotificationImportance.Max,
+            ledOffMs: 100,
+            ledOnMs: 500,
+            locked: true,
+            channelName: 'Upload notifications',
+            channelDescription: 'Upload channel for download progress',
+            defaultColor: Colors.black,
+            ledColor: Colors.white,
+            channelShowBadge: false,
+          ),
+          NotificationChannel(
+            icon: 'resource://drawable/ic_stat_file_upload_done',
+            importance: NotificationImportance.Max,
+            channelKey: 'upload_completed_channel',
+            channelName: 'Upload completed notifications',
+            channelDescription: 'Notification channel for download completed',
+            defaultColor: Colors.black,
+            ledColor: Colors.white,
+            channelShowBadge: false,
+          ),
+        ],
+      );
+    }
   }
 
   /// upload file and receive response
