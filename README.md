@@ -24,10 +24,48 @@ This package for upload file you can display notifications and progress notifica
 
 ```swift
  Change
-  BUILD_LIBRARY_FOR_DISTRIBUTION = NO 
+  BUILD_LIBRARY_FOR_DISTRIBUTION = YES 
  to 
  BUILD_LIBRARY_FOR_DISTRIBUTION = NO  
  ```
+
+<p> add this in Info.plist </p>
+
+```
+
+     <key>NSCameraUsageDescription</key>
+    <string>This app needs access to your camera to allow you to take a photo to use as your profile picture.</string>
+
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app needs access to your microphone to allow you to record a video to use as your profile picture.</string>
+
+```
+
+<p> solve pod install </p>
+
+```
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+      flutter_additional_ios_build_settings(target)
+
+      target.build_configurations.each do |config|
+        config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
+          '$(inherited)',
+
+                    ## dart: PermissionGroup.notification
+                    'PERMISSION_NOTIFICATIONS=1',
+
+            ]
+            config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+            config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
+
+
+    end
+  end
+end
+
+```
 
 <h3 style="display:inline-block;">Note: </h3> <h4 style="display:inline-block;;"> Notification progress bar not support in ios.</h4>
 

@@ -1,3 +1,7 @@
+## 1.0.3
+
+- change readme for configuration ios
+
 ## 1.0.2
 
 - fix permission notification issue when not allowed with awesome notification
