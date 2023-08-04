@@ -23,8 +23,6 @@ class TBIBFileUploader {
     }
     permission = await Permission.notification.isGranted;
     if (permission) {
-      await AwesomeNotifications().requestPermissionToSendNotifications();
-
       await AwesomeNotifications().initialize(
         null,
         [

@@ -1,3 +1,7 @@
+## 1.0.4
+
+- fix
+
 ## 1.0.3
 
 - change readme for configuration ios
