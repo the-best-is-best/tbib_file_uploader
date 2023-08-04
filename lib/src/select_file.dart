@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tbib_file_uploader/src/functions/select_file.dart';
 import 'package:tbib_file_uploader/src/functions/select_image_camera.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
@@ -121,6 +122,32 @@ class _SelectFileState extends State<SelectFile> {
                   // ),
                   onPressed: () async {
                     Navigator.pop(context);
+                    var status = await Permission.storage.isGranted;
+                    if (!status) {
+                      status = await Permission.storage.request().isGranted;
+                    }
+                    if (!status) {
+                      // show snakebar error permission
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          content:
+                              const Text('Permission denied to access storage'),
+                        ),
+                      );
+
+                      Future.delayed(
+                        const Duration(seconds: 2),
+                        openAppSettings,
+                      );
+
+                      return;
+                    }
+
                     final file = await selectFileAsync(
                       maxSize: widget.maxFileSize,
                       changeFileNameTo: widget.changeFileNameTo,
@@ -153,6 +180,31 @@ class _SelectFileState extends State<SelectFile> {
                   ),
                   onPressed: () async {
                     Navigator.pop(context);
+                    var status = await Permission.photos.isGranted;
+                    if (!status) {
+                      status = await Permission.photos.request().isGranted;
+                    }
+                    if (!status) {
+                      // show snakebar error permission
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          content:
+                              const Text('Permission denied to access storage'),
+                        ),
+                      );
+
+                      Future.delayed(
+                        const Duration(seconds: 2),
+                        openAppSettings,
+                      );
+
+                      return;
+                    }
 
                     final image = await selectImageGalleryAsync(
                       maxSize: widget.maxFileSize,
@@ -186,6 +238,31 @@ class _SelectFileState extends State<SelectFile> {
                   ),
                   onPressed: () async {
                     Navigator.pop(context);
+                    var status = await Permission.camera.isGranted;
+                    if (!status) {
+                      status = await Permission.camera.request().isGranted;
+                    }
+                    if (!status) {
+                      // show snakebar error permission
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          content:
+                              const Text('Permission denied to access camera'),
+                        ),
+                      );
+
+                      Future.delayed(
+                        const Duration(seconds: 2),
+                        openAppSettings,
+                      );
+
+                      return;
+                    }
 
                     final image = await selectImageCameraAsync(
                       maxSize: widget.maxFileSize,

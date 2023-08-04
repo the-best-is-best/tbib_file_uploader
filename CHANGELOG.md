@@ -1,3 +1,7 @@
+## 1.0.5
+
+- ask permission when needed if permission denied will display error and open setting after 2 sec
+
 ## 1.0.4
 
 - fix
