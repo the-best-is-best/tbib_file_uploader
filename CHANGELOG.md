@@ -1,3 +1,9 @@
+
+## 1.0.6
+
+- Solve issue permissions in android 12 to above
+- support android 14
+
 ## 1.0.5
 
 - ask permission when needed if permission denied will display error and open setting after 2 sec

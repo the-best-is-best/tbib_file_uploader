@@ -2,6 +2,8 @@ PODS:
   - awesome_notifications (0.0.5):
     - Flutter
     - IosAwnCore (= 0.7.3)
+  - device_info_plus (0.0.1):
+    - Flutter
   - DKImagePickerController/Core (4.3.4):
     - DKImagePickerController/ImageDataManager
     - DKImagePickerController/Resource
@@ -51,6 +53,7 @@ PODS:
 
 DEPENDENCIES:
   - awesome_notifications (from `.symlinks/plugins/awesome_notifications/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - file_picker (from `.symlinks/plugins/file_picker/ios`)
   - Flutter (from `Flutter`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -68,6 +71,8 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   awesome_notifications:
     :path: ".symlinks/plugins/awesome_notifications/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   file_picker:
     :path: ".symlinks/plugins/file_picker/ios"
   Flutter:
@@ -81,6 +86,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   awesome_notifications: d63d9a25f126860f9a600850d99772237895b3ba
+  device_info_plus: 7545d84d8d1b896cb16a4ff98c19f07ec4b298ea
   DKImagePickerController: b512c28220a2b8ac7419f21c491fc8534b7601ac
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: ce3938a0df3cc1ef404671531facef740d03f920
@@ -92,6 +98,6 @@ SPEC CHECKSUMS:
   SwiftyGif: 93a1cc87bf3a51916001cf8f3d63835fb64c819f
   tbib_file_uploader: bcb87f766ff443f53ba570f29ec29ae3e7981fd8
 
-PODFILE CHECKSUM: 938e16d38fddf3fe757de570571e0bdcc556b4ae
+PODFILE CHECKSUM: 799ebf3edb2089dcb25b187731d90fdcd60b8a54
 
 COCOAPODS: 1.12.1
