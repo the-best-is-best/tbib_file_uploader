@@ -1,3 +1,6 @@
+## 1.0.6-form-field-builder
+
+- Use this version if use package (flutter_form_builder)
 
 ## 1.0.6
 
