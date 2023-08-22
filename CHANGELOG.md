@@ -1,4 +1,6 @@
+## 1.11.0
 
+fix android 11 permission
 ## 1.0.7 - 1.0.8 - 1.0.9 - 1.0.10
 
 - Solve photo permission in android
