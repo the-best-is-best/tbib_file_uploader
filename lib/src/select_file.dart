@@ -293,31 +293,6 @@ class _SelectFileState extends State<SelectFile> {
 
                         return;
                       }
-                      status = await Permission.videos.isGranted;
-                      if (!status) {
-                        status = await Permission.videos.request().isGranted;
-                      }
-                      if (!status) {
-                        // show snakebar error permission
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            content:
-                                const Text('Permission denied to access photo'),
-                          ),
-                        );
-
-                        Future.delayed(
-                          const Duration(seconds: 2),
-                          openAppSettings,
-                        );
-
-                        return;
-                      }
                     }
 
                     final image = await selectImageGalleryAsync(

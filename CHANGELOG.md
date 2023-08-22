@@ -1,4 +1,4 @@
-## 1.0.7-form-field-builder
+## 1.0.8-form-field-builder
 
 - Fix permission gallery in android
 ## 1.0.6-form-field-builder

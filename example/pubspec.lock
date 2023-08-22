@@ -427,7 +427,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "1.0.7-form-field-builder"
+    version: "1.0.8-form-field-builder"
   term_glyph:
     dependency: transitive
     description:
