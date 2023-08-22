@@ -1,4 +1,8 @@
 
+## 1.0.7
+
+- Solve photo permission in android
+
 ## 1.0.6
 
 - Solve issue permissions in android 12 to above

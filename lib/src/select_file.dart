@@ -196,7 +196,7 @@ class _SelectFileState extends State<SelectFile> {
                     Navigator.pop(context);
                     if (Platform.isAndroid) {
                       final deviceInfo = await DeviceInfoPlugin().androidInfo;
-                      if (deviceInfo.version.sdkInt > 32) {
+                      if (deviceInfo.version.sdkInt > 30) {
                         bool checkPermission;
                         if (await Permission.photos.isDenied) {
                           await Permission.photos.request();
@@ -231,69 +231,46 @@ class _SelectFileState extends State<SelectFile> {
                             return;
                           }
                         }
-                      }
-                      bool checkPermission;
-                      if (await Permission.videos.isDenied) {
-                        await Permission.videos.request();
-                      }
-                      checkPermission = await Permission.videos.isGranted;
-                      if (!checkPermission) {
-                        var status = await Permission.videos.isGranted;
-                        if (!status) {
-                          status = await Permission.videos.request().isGranted;
+                      } else {
+                        bool checkPermission;
+                        if (await Permission.storage.isDenied) {
+                          await Permission.storage.request();
                         }
-                        if (!status) {
-                          // show snakebar error permission
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              backgroundColor: Colors.red,
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                        checkPermission = await Permission.storage.isGranted;
+                        if (!checkPermission) {
+                          var status = await Permission.storage.isGranted;
+                          if (!status) {
+                            status =
+                                await Permission.storage.request().isGranted;
+                          }
+                          if (!status) {
+                            // show snakebar error permission
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.red,
+                                behavior: SnackBarBehavior.floating,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                content: const Text(
+                                  'Permission denied to access photos',
+                                ),
                               ),
-                              content: const Text(
-                                'Permission denied to access photos',
-                              ),
-                            ),
-                          );
+                            );
 
-                          Future.delayed(
-                            const Duration(seconds: 2),
-                            openAppSettings,
-                          );
+                            Future.delayed(
+                              const Duration(seconds: 2),
+                              openAppSettings,
+                            );
 
-                          return;
+                            return;
+                          }
                         }
                       }
                     } else {
                       var status = await Permission.photos.isGranted;
                       if (!status) {
                         status = await Permission.photos.request().isGranted;
-                      }
-                      if (!status) {
-                        // show snakebar error permission
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: Colors.red,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            content:
-                                const Text('Permission denied to access photo'),
-                          ),
-                        );
-
-                        Future.delayed(
-                          const Duration(seconds: 2),
-                          openAppSettings,
-                        );
-
-                        return;
-                      }
-                      status = await Permission.videos.isGranted;
-                      if (!status) {
-                        status = await Permission.videos.request().isGranted;
                       }
                       if (!status) {
                         // show snakebar error permission
