@@ -1,3 +1,6 @@
+## 1.10.1-form-field-builder
+
+- fix android 11 permission
 ## 1.0.8-form-field-builder to 1.0.10
 
 - Fix permission gallery in android
