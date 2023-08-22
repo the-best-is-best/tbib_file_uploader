@@ -1,3 +1,7 @@
+## 1.10.2
+
+- fix android release issue
+
 ## 1.10.1
 
 fix android 11 permission
