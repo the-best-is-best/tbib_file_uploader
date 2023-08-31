@@ -86,7 +86,18 @@ class TBIBFileUploader {
     final startTime = DateTime.now();
     var notificationDisplayDate = DateTime.now();
     var endTime = DateTime.now().add(refreshNotificationProgress);
-
+    if (Platform.isIOS) {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: 'upload_channel',
+          title: 'Start uploading',
+          body: '',
+          wakeUpScreen: true,
+          locked: true,
+        ),
+      );
+    }
     final result = await dio.fetch<Map<String, dynamic>>(
       _setStreamType<Map<String, dynamic>>(
         Options(
@@ -101,27 +112,28 @@ class TBIBFileUploader {
           onSendProgress: (count, total) {
             if (showNewNotification) {
               showNewNotification = false;
-
-              _onSendProgress(
-                count,
-                total,
-                startTime: startTime,
-                refreshNotificationProgress: refreshNotificationProgress,
-                showNotification: showDownloadSpeed,
-                showDownloadSpeed: showDownloadSpeed,
-                receiveBytesAsMB: receiveBytesAsMB,
-                showNotificationWithoutProgress:
-                    showNotificationWithoutProgress,
-                onSendProgress: onSendProgress,
-              );
-            } else {
-              notificationDisplayDate = DateTime.now();
-              if (notificationDisplayDate.millisecondsSinceEpoch >
-                  endTime.millisecondsSinceEpoch) {
-                //   await AwesomeNotifications().dismiss(1);
-                showNewNotification = true;
-                notificationDisplayDate = endTime;
-                endTime = DateTime.now().add(refreshNotificationProgress);
+              if (Platform.isAndroid) {
+                _onSendProgress(
+                  count,
+                  total,
+                  startTime: startTime,
+                  refreshNotificationProgress: refreshNotificationProgress,
+                  showNotification: showDownloadSpeed,
+                  showDownloadSpeed: showDownloadSpeed,
+                  receiveBytesAsMB: receiveBytesAsMB,
+                  showNotificationWithoutProgress:
+                      showNotificationWithoutProgress,
+                  onSendProgress: onSendProgress,
+                );
+              } else {
+                notificationDisplayDate = DateTime.now();
+                if (notificationDisplayDate.millisecondsSinceEpoch >
+                    endTime.millisecondsSinceEpoch) {
+                  //   await AwesomeNotifications().dismiss(1);
+                  showNewNotification = true;
+                  notificationDisplayDate = endTime;
+                  endTime = DateTime.now().add(refreshNotificationProgress);
+                }
               }
             }
           },
