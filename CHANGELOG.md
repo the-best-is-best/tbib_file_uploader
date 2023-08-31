@@ -1,3 +1,7 @@
+## 1.10.3 - 1.10.4 - 1.10.5
+
+- add flutter_form_builder
+
 ## 1.10.2
 
 - fix android release issue

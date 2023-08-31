@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter/material.dart';
-import 'package:tbib_file_uploader/src/widget/tbib_uploader_form_field.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 class TBIBUploaderFile extends StatefulWidget {
@@ -86,8 +85,8 @@ class TBIBUploaderFile extends StatefulWidget {
 }
 
 class _UploaderFileState extends State<TBIBUploaderFile> {
-  late final GlobalKey<FormFieldState<Map<String, dynamic>?>> _formFieldKey =
-      GlobalKey<FormFieldState<Map<String, dynamic>?>>();
+  // late final GlobalKey<FormFieldState<Map<String, dynamic>?>>? _formFieldKey =
+  //     GlobalKey<FormFieldState<Map<String, dynamic>?>>();
   final _animatedContainerKey = GlobalKey();
   double height = 0;
   double width = 0;
@@ -125,13 +124,12 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
         firstChild: Column(
           children: [
             if (widget.isHide) ...{
-              const SizedBox.shrink()
+              const SizedBox.shrink(),
             } else ...{
               TBIBUploaderFormField(
-                key: _formFieldKey,
+                //  key: _formFieldKey,
                 validator: widget.isHide ? null : widget.validator,
-                allowedExtensions:
-                    widget.allowedExtensions?.map((e) => e.name).toList(),
+                allowedExtensions: widget.allowedExtensions,
                 canDownloadFile: widget.canDownloadFile,
                 showFileName: widget.showFileName,
                 changeFileNameTo: widget.changeFileNameTo,
@@ -148,16 +146,13 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
                 style: widget.style,
               ),
               if (widget.children != null)
-                ...widget.children!
-                    .map(
-                      (e) => Padding(
-                        padding:
-                            widget.style?.padding ?? const EdgeInsets.all(10),
-                        child: e,
-                      ),
-                    )
-                    .toList(),
-            }
+                ...widget.children!.map(
+                  (e) => Padding(
+                    padding: widget.style?.padding ?? const EdgeInsets.all(10),
+                    child: e,
+                  ),
+                ),
+            },
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tbib_file_uploader/gen/fonts/tbib_icons.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
@@ -8,20 +9,21 @@ import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   /// Creates a [TBIBUploaderFormField] that contains a [FileUploader].
   TBIBUploaderFormField({
-    required this.style,
     required this.selectedFile,
-    required this.changeFileNameTo,
-    required this.maxFileSize,
-    required this.downloadFileOnPressed,
-    required this.displayNote,
-    required this.allowedExtensions,
-    required this.imageQuality,
-    required this.fileType,
+    this.changeFileNameTo,
+    this.maxFileSize,
+    this.downloadFileOnPressed,
+    this.allowedExtensions,
+    this.imageQuality,
+    this.fileType,
+    this.displayNote,
+    this.style,
     this.canDownloadFile = false,
     this.showFileName = false,
     this.selectFile = true,
     this.selectImageCamera = true,
     this.selectImageGallery = true,
+    this.widgetName = 'tbib_uploader',
     super.key,
     // super.onSaved,
     super.validator,
@@ -41,7 +43,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
               'path': null,
               'name': null,
               'error': null,
-              'showError': false
+              'showError': false,
             };
             data = formState.value ?? data;
             log('error  ${data['error']}');
@@ -69,7 +71,8 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextFormField(
+                      FormBuilderTextField(
+                        name: widgetName,
                         focusNode: tbibUplaoderFocusNode,
                         controller: textEditingController,
                         keyboardType: TextInputType.none,
@@ -128,7 +131,9 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                     formState,
                                     selectedFile,
                                     changeFileNameTo,
-                                    allowedExtensions,
+                                    allowedExtensions
+                                        ?.map((e) => e.name)
+                                        .toList(),
                                     imageQuality,
                                     selectFile,
                                     selectImageGallery,
@@ -204,7 +209,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   final void Function()? downloadFileOnPressed;
 
   /// [allowedExtensions] if use select from storage will display only this extensions.
-  final List<String>? allowedExtensions;
+  final List<FileExtensions>? allowedExtensions;
 
   /// [canDownloadFile] if true, you can download file after upload.
   final bool canDownloadFile;
@@ -239,6 +244,9 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
 
   /// [selectImageCamera] is a bool to select image from camera.
   final bool selectImageCamera;
+
+  /// [widgetName] is a String name key in api.
+  final String widgetName;
 }
 
 Future<void> _selectFileOrImage(
@@ -272,7 +280,7 @@ Future<void> _selectFileOrImage(
             'name': name,
             'error': error,
             'isHide': false,
-            'showError': true
+            'showError': true,
           });
 
           selectedFile?.call(name: name, path: path);

@@ -9,4 +9,5 @@ export 'src/functions/select_file_or_image.dart';
 export 'src/select_file.dart';
 export 'src/style/tbib_file_uploader_style.dart';
 export 'src/tbib_file_uploader.dart';
+export 'src/widget/tbib_uploader_form_field.dart';
 export 'src/widget/upload_widget.dart';

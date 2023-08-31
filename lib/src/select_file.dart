@@ -196,7 +196,7 @@ class _SelectFileState extends State<SelectFile> {
                     Navigator.pop(context);
                     if (Platform.isAndroid) {
                       final deviceInfo = await DeviceInfoPlugin().androidInfo;
-                      if (deviceInfo.version.sdkInt > 30) {
+                      if (deviceInfo.version.sdkInt >= 30) {
                         bool checkPermission;
                         if (await Permission.photos.isDenied) {
                           await Permission.photos.request();
