@@ -262,7 +262,7 @@ Future<void> _selectFileOrImage(
   bool selectImageCamera,
   FileType? fileType,
 ) async {
-  await showModalBottomSheet<String>(
+  await showModalBottomSheet<String?>(
     context: context,
     builder: (context) {
       return SelectFile(

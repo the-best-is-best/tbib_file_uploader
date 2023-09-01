@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter/material.dart';
+import 'package:tbib_file_uploader/src/widget/tbib_uploader_form_field.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 class TBIBUploaderFile extends StatefulWidget {
