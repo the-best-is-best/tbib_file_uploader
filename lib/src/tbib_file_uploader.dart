@@ -86,7 +86,7 @@ class TBIBFileUploader {
     final startTime = DateTime.now();
     var notificationDisplayDate = DateTime.now();
     var endTime = DateTime.now().add(refreshNotificationProgress);
-    if (Platform.isIOS) {
+    if (Platform.isIOS && showNotification) {
       await AwesomeNotifications().createNotification(
         content: NotificationContent(
           id: 1,
@@ -110,7 +110,7 @@ class TBIBFileUploader {
           pathApi,
           data: data,
           onSendProgress: (count, total) {
-            if (showNewNotification) {
+            if (showNewNotification && showNotification) {
               showNewNotification = false;
               if (Platform.isAndroid) {
                 _onSendProgress(
