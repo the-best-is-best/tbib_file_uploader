@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:tbib_file_uploader/gen/fonts/tbib_icons.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
@@ -23,7 +22,6 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
     this.selectFile = true,
     this.selectImageCamera = true,
     this.selectImageGallery = true,
-    this.widgetName = 'tbib_uploader',
     super.key,
     // super.onSaved,
     super.validator,
@@ -71,8 +69,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      FormBuilderTextField(
-                        name: widgetName,
+                      TextFormField(
                         focusNode: tbibUplaoderFocusNode,
                         controller: textEditingController,
                         keyboardType: TextInputType.none,
@@ -244,9 +241,6 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
 
   /// [selectImageCamera] is a bool to select image from camera.
   final bool selectImageCamera;
-
-  /// [widgetName] is a String name key in api.
-  final String widgetName;
 }
 
 Future<void> _selectFileOrImage(

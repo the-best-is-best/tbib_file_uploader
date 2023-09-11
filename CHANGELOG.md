@@ -1,3 +1,8 @@
+##  1.10.7
+
+- removed flutter_form_builder
+- upgrade dependency
+
 ## 1.10.3 - 1.10.4 - 1.10.5 - 1.10.6
 
 - add flutter_form_builder
