@@ -44,8 +44,12 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [Select Image Camera] to select image from camera.
   final bool selectImageCamera;
 
+  /// [selectMultiImage] to select multi image from gallery not support camera
+  /// or files.
+  final bool selectMultiImage;
+
   /// [selectedFile] is a function to select file.
-  final Function({String? name, String? path})? selectedFile;
+  final void Function({List<String?>? name, List<String?>? path})? selectedFile;
 
   /// [children] is a list of widgets.
   final List<Widget>? children;
@@ -63,6 +67,7 @@ class TBIBUploaderFile extends StatefulWidget {
     required this.selectedFile,
     super.key,
     this.validator,
+    this.selectMultiImage = false,
     this.isHide = false,
     this.allowedExtensions,
     this.canDownloadFile = false,
@@ -93,22 +98,6 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
   double width = 0;
   bool isFirst = true;
 
-  @override
-  void initState() {
-    // hideWidth = widget.isHide;
-    // super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isFirst) {
-        height = _animatedContainerKey.currentContext!.size!.height;
-        width = _animatedContainerKey.currentContext!.size!.width;
-        isFirst = false;
-        setState(() {});
-      }
-    });
-
-    super.initState();
-  }
-
   // static bool _refresh = false;
   @override
   Widget build(BuildContext context) {
@@ -129,20 +118,29 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
             } else ...{
               TBIBUploaderFormField(
                 //  key: _formFieldKey,
+
                 validator: widget.isHide ? null : widget.validator,
                 allowedExtensions: widget.allowedExtensions,
-                canDownloadFile: widget.canDownloadFile,
-                showFileName: widget.showFileName,
-                changeFileNameTo: widget.changeFileNameTo,
+                canDownloadFile:
+                    widget.selectMultiImage ? false : widget.canDownloadFile,
+                showFileName:
+                    widget.selectMultiImage ? false : widget.showFileName,
+                changeFileNameTo:
+                    widget.selectMultiImage ? null : widget.changeFileNameTo,
                 autovalidateMode: widget.autovalidateMode,
-                displayNote: widget.displayNote,
-                downloadFileOnPressed: widget.downloadFileOnPressed,
+                displayNote:
+                    widget.selectMultiImage ? null : widget.displayNote,
+                downloadFileOnPressed: widget.selectMultiImage
+                    ? null
+                    : widget.downloadFileOnPressed,
                 imageQuality: widget.imageQuality,
                 maxFileSize: widget.maxFileSize,
-                selectFile: widget.selectFile,
+                selectFile: widget.selectMultiImage ? false : widget.selectFile,
                 fileType: widget.fileType,
-                selectImageCamera: widget.selectImageCamera,
-                selectImageGallery: widget.selectImageGallery,
+                selectImageCamera:
+                    widget.selectMultiImage ? false : widget.selectImageCamera,
+                selectImageGallery:
+                    widget.selectMultiImage ? true : widget.selectImageGallery,
                 selectedFile: widget.selectedFile,
                 style: widget.style,
               ),
@@ -158,5 +156,21 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // hideWidth = widget.isHide;
+    // super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isFirst) {
+        height = _animatedContainerKey.currentContext!.size!.height;
+        width = _animatedContainerKey.currentContext!.size!.width;
+        isFirst = false;
+        setState(() {});
+      }
+    });
+
+    super.initState();
   }
 }

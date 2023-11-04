@@ -29,8 +29,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -42,6 +40,8 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  const MyHomePage({super.key, required this.title});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -50,21 +50,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hide = false;
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      selectFileOrImage(
-          context: context,
-          selectedFile: ({String? name, String? path}) {
-            log('selectedFile: $name , $path');
-          },
-          selectFile: false,
-          selectImageCamera: true,
-          selectImageGallery: true);
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   selectedFile: ({name, path}) {
                                     if (path == null) return;
                                     log('selectedFile $name $path');
-                                    selectedFile = File(path);
+                                    selectedFile = File(path[0]!);
                                   },
                                   children: [
                                     TextFormField(
@@ -279,5 +264,20 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      selectFileOrImage(
+          context: context,
+          selectedFile: ({String? name, String? path}) {
+            log('selectedFile: $name , $path');
+          },
+          selectFile: false,
+          selectImageCamera: true,
+          selectImageGallery: true);
+    });
   }
 }

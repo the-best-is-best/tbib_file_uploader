@@ -4,27 +4,10 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:tbib_file_uploader/src/functions/select_file.dart';
-import 'package:tbib_file_uploader/src/functions/select_image_camera.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 /// A [Select File] that contains a [FileUploader].
 class SelectFile extends StatefulWidget {
-  /// Creates a [TBIBFormField] that contains a [FileUploader].
-
-  const SelectFile({
-    required this.selectFileOrImage,
-    required this.maxFileSize,
-    required this.changeFileNameTo,
-    required this.allowedExtensions,
-    required this.imageQuality,
-    required this.selectImageCamera,
-    required this.selectImageGallery,
-    required this.selectFile,
-    required this.fileType,
-    super.key,
-  });
-
   /// [selectFileOrImage] is a function that returns a [FileUploader].
   final void Function({
     required String? path,
@@ -41,14 +24,14 @@ class SelectFile extends StatefulWidget {
   /// [imageQuality] is a number between 0 and 100.
   final int? imageQuality;
 
-  // /// [selectImageOnly] is a bool to select image only.
-  // final bool selectImageOnly;
   /// [selectImageCamera] is a bool to select image from camera.
   final bool selectImageCamera;
 
   /// [selectImageGallery] is a bool to select image from gallery.
   final bool selectImageGallery;
 
+  // /// [selectImageOnly] is a bool to select image only.
+  // final bool selectImageOnly;
   /// [selectFile] is a bool to select file.
   final bool selectFile;
 
@@ -58,6 +41,21 @@ class SelectFile extends StatefulWidget {
   /// [fileType] is a FileType.
   final FileType? fileType;
 
+  /// Creates a [TBIBFormField] that contains a [FileUploader].
+
+  const SelectFile({
+    required this.selectFileOrImage,
+    required this.maxFileSize,
+    required this.changeFileNameTo,
+    required this.allowedExtensions,
+    required this.imageQuality,
+    required this.selectImageCamera,
+    required this.selectImageGallery,
+    required this.selectFile,
+    required this.fileType,
+    super.key,
+  });
+
   @override
   State<SelectFile> createState() => _SelectFileState();
 }
@@ -65,31 +63,6 @@ class SelectFile extends StatefulWidget {
 class _SelectFileState extends State<SelectFile> {
   bool isImage = true;
   bool isFiles = true;
-  @override
-  void initState() {
-    isImage = widget.allowedExtensions?.any(
-          (element) =>
-              element.toUpperCase().contains('JPG') ||
-              element.toUpperCase().contains('JPEG') ||
-              element.toUpperCase().contains('GIF') ||
-              element.toUpperCase().contains('SVG') ||
-              element.toUpperCase().contains('BMP'),
-        ) ??
-        true;
-    isFiles = widget.allowedExtensions?.any(
-          (element) =>
-              !element.toUpperCase().contains('JPG') &&
-              !element.toUpperCase().contains('JPEG') &&
-              !element.toUpperCase().contains('GIF') &&
-              !element.toUpperCase().contains('SVG') &&
-              !element.toUpperCase().contains('BMP'),
-        ) ??
-        false;
-    log('is file $isFiles');
-    log(widget.allowedExtensions?.first ?? '');
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Builder(
@@ -231,42 +204,43 @@ class _SelectFileState extends State<SelectFile> {
                             return;
                           }
                         }
-                      } else {
-                        bool checkPermission;
-                        if (await Permission.storage.isDenied) {
-                          await Permission.storage.request();
-                        }
-                        checkPermission = await Permission.storage.isGranted;
-                        if (!checkPermission) {
-                          var status = await Permission.storage.isGranted;
-                          if (!status) {
-                            status =
-                                await Permission.storage.request().isGranted;
-                          }
-                          if (!status) {
-                            // show snakebar error permission
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: Colors.red,
-                                behavior: SnackBarBehavior.floating,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                content: const Text(
-                                  'Permission denied to access photos',
-                                ),
-                              ),
-                            );
-
-                            Future.delayed(
-                              const Duration(seconds: 2),
-                              openAppSettings,
-                            );
-
-                            return;
-                          }
-                        }
                       }
+                      // } else {
+                      //   bool checkPermission;
+                      //   if (await Permission.storage.isDenied) {
+                      //     await Permission.storage.request();
+                      //   }
+                      //   checkPermission = await Permission.storage.isGranted;
+                      //   if (!checkPermission) {
+                      //     var status = await Permission.storage.isGranted;
+                      //     if (!status) {
+                      //       status =
+                      //           await Permission.storage.request().isGranted;
+                      //     }
+                      //     if (!status) {
+                      //       // show snakebar error permission
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         SnackBar(
+                      //           backgroundColor: Colors.red,
+                      //           behavior: SnackBarBehavior.floating,
+                      //           shape: RoundedRectangleBorder(
+                      //             borderRadius: BorderRadius.circular(10),
+                      //           ),
+                      //           content: const Text(
+                      //             'Permission denied to access photos',
+                      //           ),
+                      //         ),
+                      //       );
+
+                      //       Future.delayed(
+                      //         const Duration(seconds: 2),
+                      //         openAppSettings,
+                      //       );
+
+                      //       return;
+                      //     }
+                      //   }
+                      // }
                     } else {
                       var status = await Permission.photos.isGranted;
                       if (!status) {
@@ -373,5 +347,30 @@ class _SelectFileState extends State<SelectFile> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    isImage = widget.allowedExtensions?.any(
+          (element) =>
+              element.toUpperCase().contains('JPG') ||
+              element.toUpperCase().contains('JPEG') ||
+              element.toUpperCase().contains('GIF') ||
+              element.toUpperCase().contains('SVG') ||
+              element.toUpperCase().contains('BMP'),
+        ) ??
+        true;
+    isFiles = widget.allowedExtensions?.any(
+          (element) =>
+              !element.toUpperCase().contains('JPG') &&
+              !element.toUpperCase().contains('JPEG') &&
+              !element.toUpperCase().contains('GIF') &&
+              !element.toUpperCase().contains('SVG') &&
+              !element.toUpperCase().contains('BMP'),
+        ) ??
+        false;
+    log('is file $isFiles');
+    log(widget.allowedExtensions?.first ?? '');
+    super.initState();
   }
 }

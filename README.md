@@ -22,11 +22,14 @@ This package for upload file you can display notifications and progress notifica
 
 <h3> step 1 </h3>
 
-```swift
  Change
-  BUILD_LIBRARY_FOR_DISTRIBUTION = NO 
- to 
- BUILD_LIBRARY_FOR_DISTRIBUTION = NO  
+
+```swift
+  BUILD_LIBRARY_FOR_DISTRIBUTION = YES
+```
+ to
+ ```swift
+  BUILD_LIBRARY_FOR_DISTRIBUTION = NO  
  ```
 
 <p> add this in Info.plist </p>

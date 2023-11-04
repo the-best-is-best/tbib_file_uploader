@@ -5,7 +5,10 @@ export 'package:dio/dio.dart';
 export 'package:file_picker/file_picker.dart';
 
 export 'src/enums/file_extensions.dart';
+export 'src/functions/select_file.dart';
 export 'src/functions/select_file_or_image.dart';
+export 'src/functions/select_image_camera.dart';
+export 'src/functions/select_multi_image.dart';
 export 'src/select_file.dart';
 export 'src/style/tbib_file_uploader_style.dart';
 export 'src/tbib_file_uploader.dart';

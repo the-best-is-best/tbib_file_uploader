@@ -1,3 +1,23 @@
+## 1.11.0
+
+- support multiple select image 
+- support use function select file or image 
+```dart
+  selectFileOrImage()
+```
+- support use function select file 
+```dart
+  selectFileAsync()
+```
+- support select image form camera
+```dart
+  selectImageCameraAsync()
+```
+- support select multiple image
+```dart
+  selectMultiImage()
+```
+
 ## 1.10.8
 
 - upgrade dependencies

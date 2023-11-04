@@ -1,11 +1,111 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:tbib_file_uploader/gen/fonts/tbib_icons.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
+Future<void> _selectFileOrImage(
+  BuildContext context,
+  int? maxFileSize,
+  FormFieldState<Map<String, dynamic>?> state,
+  void Function({List<String?>? name, List<String?>? path})? selectedFile,
+  String? changeFileNameTo,
+  List<String>? allowedExtensions,
+  int? imageQuality,
+  bool selectFile,
+  bool selectImageGallery,
+  bool selectImageCamera,
+  FileType? fileType,
+  bool selectMultiImageBool,
+) async {
+  if (selectMultiImageBool) {
+    await selectMultiImage(
+      context: context,
+      selectedFiles: ({name, path}) {
+        state.didChange({
+          'path': path,
+          'name': name,
+          'error': null,
+          'isHide': false,
+          'showError': true,
+        });
+        selectedFile?.call(name: name, path: path);
+      },
+    );
+    return;
+  }
+  await showModalBottomSheet<String?>(
+    context: context,
+    builder: (context) {
+      return SelectFile(
+        selectFile: selectFile,
+        selectImageGallery: selectImageGallery,
+        selectImageCamera: selectImageCamera,
+        imageQuality: imageQuality,
+        maxFileSize: maxFileSize,
+        changeFileNameTo: changeFileNameTo,
+        allowedExtensions: allowedExtensions,
+        fileType: fileType,
+        selectFileOrImage: ({path, name, error}) {
+          state.didChange({
+            'path': path,
+            'name': name,
+            'error': error,
+            'isHide': false,
+            'showError': true,
+          });
+
+          selectedFile?.call(name: [name], path: [path]);
+        },
+      );
+    },
+  );
+}
+
 /// A [FormField] that contains a [FileUploader].
 class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
+  /// Select File data
+  final void Function({List<String?>? path, List<String?>? name})? selectedFile;
+
+  /// [downloadFileOnPressed] if [canDownloadFile] is true, you can download f
+  /// ile after upload.
+  final void Function()? downloadFileOnPressed;
+
+  /// [allowedExtensions] if use select from storage will display only this extensions.
+  final List<FileExtensions>? allowedExtensions;
+
+  /// [canDownloadFile] if true, you can download file after upload.
+  final bool canDownloadFile;
+
+  /// [changeFileNameTo] Change file name after selected
+  final String? changeFileNameTo;
+
+  /// [displayNote] to display note.
+  final String? displayNote;
+
+  /// [imageQuality] is a number between 0 and 100.
+  final int? imageQuality;
+
+  /// [maxFileSize] by MB.
+  final int? maxFileSize;
+
+  /// [showFileName] is a bool to show file name work
+  /// if you change file name from [changeFileNameTo].
+  final bool showFileName;
+
+  /// File Uploader Style
+  final TBIBUploaderStyle? style;
+
+  /// [fileType] is a FileType to select file type.
+  final FileType? fileType;
+
+  /// [selectFile] is a bool to select file.
+  final bool selectFile;
+
+  /// [selectImageGallery] is a bool to select image from gallery.
+  final bool selectImageGallery;
+
+  /// [selectImageCamera] is a bool to select image from camera.
+  final bool selectImageCamera;
+
   /// Creates a [TBIBUploaderFormField] that contains a [FileUploader].
   TBIBUploaderFormField({
     required this.selectedFile,
@@ -44,7 +144,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
               'showError': false,
             };
             data = formState.value ?? data;
-            log('error  ${data['error']}');
+
             if (formState.hasError) {
               data['error'] = data['error'] ?? formState.errorText;
               data['showError'] = true;
@@ -55,10 +155,18 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                   formState.value!['showError'] == true) {
                 textEditingController = TextEditingController(
                   text: data['path'] != null
-                      ? showFileName && changeFileNameTo != null
-                          ? (data['path'] as String).split('/').last
-                          : 'File Selected'
-                      : '',
+                      ? style?.selectMultiImage == false
+                          ? showFileName && changeFileNameTo != null
+                              ? (data['path'] as List<String>)[0]
+                                  .split('/')
+                                  .last
+                              : style?.selectFile
+                          : style?.selectFile != null
+                              ? '${style!.selectFile}' +
+                                  ' (${(data['path'] as List<String>).length})'
+                              : 'File Selected' +
+                                  ' (${(data['path'] as List<String>).length})'
+                      : style?.selectFile ?? 'File Selected',
                 );
               }
             }
@@ -70,6 +178,8 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TextFormField(
+                        style: style?.selectFileStyle ??
+                            const TextStyle(color: Colors.black),
                         focusNode: tbibUplaoderFocusNode,
                         controller: textEditingController,
                         keyboardType: TextInputType.none,
@@ -104,8 +214,8 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                               : (data['error'].toString().contains('null')
                                   ? null
                                   : data['error'].toString()),
-                          labelText: style?.labelText ?? 'Select File',
-                          hintText: 'Select File',
+                          labelText: style?.labelText,
+                          hintText: style?.hintText ?? 'Select File',
                           labelStyle: style?.labelStyle ??
                               const TextStyle(
                                 color: Colors.black,
@@ -116,10 +226,10 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                             children: [
                               IconButton(
                                 icon: style?.fileUploaderIcon ??
-                                    const Icon(
+                                    Icon(
                                       TbibIcons.fileUpload,
                                       size: 20,
-                                      color: Colors.black,
+                                      color: style?.iconColor ?? Colors.black,
                                     ),
                                 onPressed: () async {
                                   await _selectFileOrImage(
@@ -136,6 +246,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                     selectImageGallery,
                                     selectImageCamera,
                                     fileType,
+                                    style?.selectMultiImage ?? false,
                                   );
                                 },
                               ),
@@ -146,7 +257,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                         TbibIcons.fileDownload,
                                         size: 20,
                                         color: downloadFileOnPressed != null
-                                            ? Colors.black
+                                            ? style?.iconColor ?? Colors.black
                                             : null,
                                       ),
                                   onPressed: downloadFileOnPressed,
@@ -197,89 +308,4 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
             );
           },
         );
-
-  /// Select File data
-  final void Function({String? path, String? name})? selectedFile;
-
-  /// [downloadFileOnPressed] if [canDownloadFile] is true, you can download f
-  /// ile after upload.
-  final void Function()? downloadFileOnPressed;
-
-  /// [allowedExtensions] if use select from storage will display only this extensions.
-  final List<FileExtensions>? allowedExtensions;
-
-  /// [canDownloadFile] if true, you can download file after upload.
-  final bool canDownloadFile;
-
-  /// [changeFileNameTo] Change file name after selected
-  final String? changeFileNameTo;
-
-  /// [displayNote] to display note.
-  final String? displayNote;
-
-  /// [imageQuality] is a number between 0 and 100.
-  final int? imageQuality;
-
-  /// [maxFileSize] by MB.
-  final int? maxFileSize;
-
-  /// [showFileName] is a bool to show file name work
-  /// if you change file name from [changeFileNameTo].
-  final bool showFileName;
-
-  /// File Uploader Style
-  final TBIBUploaderStyle? style;
-
-  /// [fileType] is a FileType to select file type.
-  final FileType? fileType;
-
-  /// [selectFile] is a bool to select file.
-  final bool selectFile;
-
-  /// [selectImageGallery] is a bool to select image from gallery.
-  final bool selectImageGallery;
-
-  /// [selectImageCamera] is a bool to select image from camera.
-  final bool selectImageCamera;
-}
-
-Future<void> _selectFileOrImage(
-  BuildContext context,
-  int? maxFileSize,
-  FormFieldState<Map<String, dynamic>?> state,
-  void Function({String? name, String? path})? selectedFile,
-  String? changeFileNameTo,
-  List<String>? allowedExtensions,
-  int? imageQuality,
-  bool selectFile,
-  bool selectImageGallery,
-  bool selectImageCamera,
-  FileType? fileType,
-) async {
-  await showModalBottomSheet<String?>(
-    context: context,
-    builder: (context) {
-      return SelectFile(
-        selectFile: selectFile,
-        selectImageGallery: selectImageGallery,
-        selectImageCamera: selectImageCamera,
-        imageQuality: imageQuality,
-        maxFileSize: maxFileSize,
-        changeFileNameTo: changeFileNameTo,
-        allowedExtensions: allowedExtensions,
-        fileType: fileType,
-        selectFileOrImage: ({path, name, error}) {
-          state.didChange({
-            'path': path,
-            'name': name,
-            'error': error,
-            'isHide': false,
-            'showError': true,
-          });
-
-          selectedFile?.call(name: name, path: path);
-        },
-      );
-    },
-  );
 }
