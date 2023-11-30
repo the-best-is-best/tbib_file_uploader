@@ -10,6 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tbib_file_uploader/src/service/format_bytes.dart';
 
+RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
+  if (T != dynamic &&
+      !(requestOptions.responseType == ResponseType.bytes ||
+          requestOptions.responseType == ResponseType.stream)) {
+    if (T == String) {
+      requestOptions.responseType = ResponseType.plain;
+    } else {
+      requestOptions.responseType = ResponseType.json;
+    }
+  }
+  return requestOptions;
+}
+
 /// File Uploader Init
 class TBIBFileUploader {
   static bool _uploadStarted = false;
@@ -52,108 +65,6 @@ class TBIBFileUploader {
         ],
       );
     }
-  }
-
-  /// upload file and receive response
-  Future<Map<String, dynamic>> startUploadFileWithResponse({
-    /// your dio
-    required Dio dio,
-
-    /// method api
-    required String method,
-
-    /// your path api
-    required String pathApi,
-
-    /// any data will send with file
-    required FormData yourData,
-    bool showNotification = true,
-    Duration refreshNotificationProgress = const Duration(seconds: 1),
-    bool showDownloadSpeed = true,
-    bool showNotificationWithoutProgress = false,
-    bool receiveBytesAsMB = false,
-    Function({required int countDownloaded, required int totalSize})?
-        onSendProgress,
-  }) async {
-    if (_uploadStarted) {
-      log('Upload already started');
-
-      return {};
-    }
-    final data = yourData;
-
-    var showNewNotification = true;
-    final startTime = DateTime.now();
-    var notificationDisplayDate = DateTime.now();
-    var endTime = DateTime.now().add(refreshNotificationProgress);
-    if (Platform.isIOS && showNotification) {
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 1,
-          channelKey: 'upload_channel',
-          title: 'Start uploading',
-          body: '',
-          wakeUpScreen: true,
-          locked: true,
-        ),
-      );
-    }
-    final result = await dio.fetch<Map<String, dynamic>>(
-      _setStreamType<Map<String, dynamic>>(
-        Options(
-          method: method,
-          // headers: headers,
-          // extra: extra,
-          contentType: 'multipart/form-data',
-        ).compose(
-          dio.options,
-          pathApi,
-          data: data,
-          onSendProgress: (count, total) {
-            if (showNewNotification && showNotification) {
-              showNewNotification = false;
-              if (Platform.isAndroid) {
-                _onSendProgress(
-                  count,
-                  total,
-                  startTime: startTime,
-                  refreshNotificationProgress: refreshNotificationProgress,
-                  showNotification: showDownloadSpeed,
-                  showDownloadSpeed: showDownloadSpeed,
-                  receiveBytesAsMB: receiveBytesAsMB,
-                  showNotificationWithoutProgress:
-                      showNotificationWithoutProgress,
-                  onSendProgress: onSendProgress,
-                );
-              } else {
-                notificationDisplayDate = DateTime.now();
-                if (notificationDisplayDate.millisecondsSinceEpoch >
-                    endTime.millisecondsSinceEpoch) {
-                  //   await AwesomeNotifications().dismiss(1);
-                  showNewNotification = true;
-                  notificationDisplayDate = endTime;
-                  endTime = DateTime.now().add(refreshNotificationProgress);
-                }
-              }
-            }
-          },
-        ),
-      ),
-    );
-    _uploadStarted = false;
-    if (showNotification) {
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 1,
-          channelKey: 'upload_completed_channel',
-          title: 'Upload completed',
-          body: 'Uploaded Successfully',
-          wakeUpScreen: true,
-          locked: true,
-        ),
-      );
-    }
-    return result.data!;
   }
 
   /// upload file  only
@@ -243,6 +154,113 @@ class TBIBFileUploader {
       );
     }
     _uploadStarted = false;
+  }
+
+  /// upload file and receive response
+  Future<Map<String, dynamic>> startUploadFileWithResponse({
+    /// your dio
+    required Dio dio,
+
+    /// method api
+    required String method,
+
+    /// your path api
+    required String pathApi,
+
+    /// any data will send with file
+    required FormData yourData,
+    bool showNotification = true,
+    Duration refreshNotificationProgress = const Duration(seconds: 1),
+    bool showDownloadSpeed = true,
+    bool showNotificationWithoutProgress = false,
+    bool receiveBytesAsMB = false,
+    Function({required int countDownloaded, required int totalSize})?
+        onSendProgress,
+  }) async {
+    if (_uploadStarted) {
+      log('Upload already started');
+
+      return {};
+    }
+    final data = yourData;
+
+    var showNewNotification = true;
+    final startTime = DateTime.now();
+    var notificationDisplayDate = DateTime.now();
+    var endTime = DateTime.now().add(refreshNotificationProgress);
+    if (Platform.isIOS && showNotification) {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: 'upload_channel',
+          title: 'Start uploading',
+          body: '',
+          wakeUpScreen: true,
+          locked: true,
+        ),
+      );
+    }
+    try {
+      final result = await dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Map<String, dynamic>>(
+          Options(
+            method: method,
+            // headers: headers,
+            // extra: extra,
+            contentType: 'multipart/form-data',
+          ).compose(
+            dio.options,
+            pathApi,
+            data: data,
+            onSendProgress: (count, total) {
+              if (showNewNotification && showNotification) {
+                showNewNotification = false;
+                if (Platform.isAndroid) {
+                  _onSendProgress(
+                    count,
+                    total,
+                    startTime: startTime,
+                    refreshNotificationProgress: refreshNotificationProgress,
+                    showNotification: showDownloadSpeed,
+                    showDownloadSpeed: showDownloadSpeed,
+                    receiveBytesAsMB: receiveBytesAsMB,
+                    showNotificationWithoutProgress:
+                        showNotificationWithoutProgress,
+                    onSendProgress: onSendProgress,
+                  );
+                } else {
+                  notificationDisplayDate = DateTime.now();
+                  if (notificationDisplayDate.millisecondsSinceEpoch >
+                      endTime.millisecondsSinceEpoch) {
+                    //   await AwesomeNotifications().dismiss(1);
+                    showNewNotification = true;
+                    notificationDisplayDate = endTime;
+                    endTime = DateTime.now().add(refreshNotificationProgress);
+                  }
+                }
+              }
+            },
+          ),
+        ),
+      );
+      _uploadStarted = false;
+      if (showNotification) {
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: 1,
+            channelKey: 'upload_completed_channel',
+            title: 'Upload completed',
+            body: 'Uploaded Successfully',
+            wakeUpScreen: true,
+            locked: true,
+          ),
+        );
+      }
+      return result.data!;
+    } catch (e) {
+      _uploadStarted = false;
+      return {};
+    }
   }
 
   Future<void> _onSendProgress(
@@ -352,17 +370,4 @@ class TBIBFileUploader {
       ),
     );
   }
-}
-
-RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
-  if (T != dynamic &&
-      !(requestOptions.responseType == ResponseType.bytes ||
-          requestOptions.responseType == ResponseType.stream)) {
-    if (T == String) {
-      requestOptions.responseType = ResponseType.plain;
-    } else {
-      requestOptions.responseType = ResponseType.json;
-    }
-  }
-  return requestOptions;
 }
