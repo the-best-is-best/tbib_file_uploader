@@ -1,7 +1,7 @@
 name: tbib_file_uploader
 description: This package for upload file you can display notifications and
   progress notification and can receive upload bytes and total bytes
-version: 1.11.0
+version: 1.11.1
 homepage: "https://github.com/the-best-is-best/tbib_file_uploader"
 
 environment:
@@ -9,16 +9,16 @@ environment:
   flutter: ">=3.0.0"
 
 dependencies:
-  awesome_notifications: ^0.8.2
-  device_info_plus: ^9.0.3
-  dio: ^5.3.3
-  file_picker: ^6.0.0
+  awesome_notifications: ^0.8.3
+  device_info_plus: ^9.1.1
+  dio: ^5.4.0
+  file_picker: ^6.1.1
   flutter:
-     sdk: flutter
+    sdk: flutter
   # flutter_form_builder: ^9.1.0
-  image_picker: ^1.0.4
+  image_picker: ^1.0.5
   path: ^1.8.3
-  permission_handler: ^11.0.1
+  permission_handler: ^11.1.0
 
 dev_dependencies:
   mocktail: ^0.3.0
