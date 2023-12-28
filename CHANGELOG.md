@@ -1,11 +1,16 @@
-## 1.11.1
+## 1.11.2
 
 - fix build apk
+
+## 1.11.1
+
+- upgrade dependencies
 
 ## 1.11.0
 
 - support multiple select image 
 - support use function select file or image 
+
 ```dart
   selectFileOrImage()
 ```
