@@ -1,3 +1,7 @@
+## 1.11.1
+
+- fix build apk
+
 ## 1.11.0
 
 - support multiple select image 
