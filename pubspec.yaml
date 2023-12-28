@@ -1,7 +1,7 @@
 name: tbib_file_uploader
 description: This package for upload file you can display notifications and
   progress notification and can receive upload bytes and total bytes
-version: 1.11.1
+version: 1.11.2
 homepage: "https://github.com/the-best-is-best/tbib_file_uploader"
 
 environment:
