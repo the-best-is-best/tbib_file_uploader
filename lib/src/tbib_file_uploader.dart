@@ -341,8 +341,7 @@ class TBIBFileUploader {
     // String fileName,
     DateTime startTime,
   ) async {
-    final num progress =
-        math.min((receivedBytes / totalBytes * 100).round(), 100);
+    final num progress = math.min(receivedBytes / totalBytes * 100, 100);
     final num totalMB = formatBytes(totalBytes, 2).size;
     final num receivedMB = formatBytes(receivedBytes, 2).size;
     // String receiveUnit = formatBytes(receivedBytes, 2).unit;
@@ -366,7 +365,7 @@ class TBIBFileUploader {
         notificationLayout: NotificationLayout.ProgressBar,
         wakeUpScreen: true,
         locked: true,
-        progress: progress.toInt(),
+        progress: progress.toDouble(),
       ),
     );
   }

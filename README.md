@@ -22,15 +22,10 @@ This package for upload file you can display notifications and progress notifica
 
 <h3> step 1 </h3>
 
- Change
+ Change BUILD_LIBRARY_FOR_DISTRIBUTION to NO
 
-```swift
-  BUILD_LIBRARY_FOR_DISTRIBUTION = YES
-```
- to
- ```swift
-  BUILD_LIBRARY_FOR_DISTRIBUTION = NO  
- ```
+
+<img  src="https://github.com/the-best-is-best/tbib_file_uploader/blob/main/github_assets/xcode_change_need.png?raw=true" height="300"></img>
 
 <p> add this in Info.plist </p>
 
