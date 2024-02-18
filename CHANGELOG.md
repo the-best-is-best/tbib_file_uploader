@@ -1,6 +1,7 @@
 ## 2.0.0
 
 - update dep
+- change readme
 
 ## 1.11.2
 
