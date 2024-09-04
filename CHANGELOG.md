@@ -1,11 +1,15 @@
+## 2.0.3
+
+- Add namespace in gradle
+
 ## 2.0.2
+
 - update dep
 
 ## 2.0.1
 
 - update dep
 - change readme
-
 
 ## 2.0.0
 
@@ -22,21 +26,27 @@
 
 ## 1.11.0
 
-- support multiple select image 
-- support use function select file or image 
+- support multiple select image
+- support use function select file or image
 
 ```dart
   selectFileOrImage()
 ```
-- support use function select file 
+
+- support use function select file
+
 ```dart
   selectFileAsync()
 ```
+
 - support select image form camera
+
 ```dart
   selectImageCameraAsync()
 ```
+
 - support select multiple image
+
 ```dart
   selectMultiImage()
 ```
@@ -45,7 +55,7 @@
 
 - upgrade dependencies
 
-##  1.10.7
+## 1.10.7
 
 - removed flutter_form_builder
 - upgrade dependency
@@ -61,6 +71,7 @@
 ## 1.10.1
 
 fix android 11 permission
+
 ## 1.0.7 - 1.0.8 - 1.0.9 - 1.0.10
 
 - Solve photo permission in android
