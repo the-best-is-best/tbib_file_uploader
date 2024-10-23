@@ -1,3 +1,8 @@
+## 2.0.4
+
+- update awesome_notifications to ^0.10.0
+- now it is library not plugin
+
 ## 2.0.3
 
 - Add namespace in gradle

@@ -40,13 +40,7 @@ flutter:
   # This is required for using `dart:ffi`.
   # All these are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
-  plugin:
-    platforms:
-      android:
-        package: com.tbib_file_uploader.tbib_file_uploader
-        pluginClass: TbibFileUploaderPlugin
-      ios:
-        pluginClass: TbibFileUploaderPlugin
+
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
