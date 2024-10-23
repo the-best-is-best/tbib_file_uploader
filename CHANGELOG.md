@@ -1,5 +1,9 @@
 ## 2.0.4
 
+- fix assets folder not found
+
+## 2.0.4
+
 - update awesome_notifications to ^0.10.0
 - now it is library not plugin
 
