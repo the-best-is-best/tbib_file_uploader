@@ -103,51 +103,51 @@ class _MyHomePageState extends State<MyHomePage> {
                                       }),
                                 ],
                               ),
-                              Container(
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.blueAccent,
-                                        width: isHide ? 0 : 1),
-                                    borderRadius: BorderRadius.circular(30)),
-                                child: TBIBUploaderFile(
-                                  isHide: isHide,
-                                  validator: (p0) {
-                                    if (selectedFile == null) {
-                                      return 'Please select file';
-                                    }
-                                    return null;
-                                  },
-                                  allowedExtensions: const [
-                                    // FileExtensions.DOCX,
-                                    // FileExtensions.PDF,
-                                    FileExtensions.JPG,
-                                    // FileExtensions.PNG
-                                  ],
-                                  maxFileSize: 2,
-                                  fileType: FileType.image,
-                                  // displayNote: '',
-                                  // selectImageGallery: false,
-                                  // selectImageCamera: false,
-                                  selectedFile: ({name, path}) {
-                                    if (path == null) return;
-                                    log('selectedFile $name $path');
-                                    selectedFile = File(path[0]!);
-                                  },
-                                  children: [
-                                    TextFormField(
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please enter some text';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
+                              // Container(
+                              //   decoration: BoxDecoration(
+                              //       border: Border.all(
+                              //           color: Colors.blueAccent,
+                              //           width: isHide ? 0 : 1),
+                              //       borderRadius: BorderRadius.circular(30)),
+                              //   child: TBIBUploaderFile(
+                              //     isHide: isHide,
+                              //     validator: (p0) {
+                              //       if (selectedFile == null) {
+                              //         return 'Please select file';
+                              //       }
+                              //       return null;
+                              //     },
+                              //     allowedExtensions: const [
+                              //       // FileExtensions.DOCX,
+                              //       // FileExtensions.PDF,
+                              //       FileExtensions.JPG,
+                              //       FileExtensions.PNG
+                              //     ],
+                              //     maxFileSize: 2,
+                              //     fileType: FileType.image,
+                              //     // displayNote: '',
+                              //     // selectImageGallery: false,
+                              //     // selectImageCamera: false,
+                              //     selectedFile: ({name, path}) {
+                              //       if (path == null) return;
+                              //       log('selectedFile $name $path');
+                              //       selectedFile = File(path[0]!);
+                              //     },
+                              //     children: [
+                              //       TextFormField(
+                              //         validator: (value) {
+                              //           if (value == null || value.isEmpty) {
+                              //             return 'Please enter some text';
+                              //           }
+                              //           return null;
+                              //         },
+                              //       ),
+                              //     ],
+                              //   ),
+                              // ),
+                              // const SizedBox(
+                              //   height: 20,
+                              // ),
                               // ElevatedButton(
                               //     onPressed: () async {
                               //       builderSetState(() {
@@ -193,9 +193,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                   allowedExtensions: const [
                                     FileExtensions.XLS,
                                     FileExtensions.XLSX,
-                                    FileExtensions.JPEG,
+                                    FileExtensions.PDF,
                                   ],
-                                  selectedFile: ({name, path}) {},
+                                  selectedFile: ({name, path}) {
+                                    selectedFile = File(path![0]!);
+                                  },
                                   maxFileSize: 12,
                                   style: const TBIBUploaderStyle(
                                       labelText: 'Please select file 1'),

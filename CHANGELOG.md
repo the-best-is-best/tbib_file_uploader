@@ -1,3 +1,7 @@
+## 2.2.0
+
+- fix bugs
+
 ## 2.0.3
 
 - Add namespace in gradle
