@@ -81,7 +81,7 @@ class TBIBFileUploader {
     /// any data will send with file
     required FormData yourData,
     bool showNotification = true,
-    Duration refreshNotificationProgress = const Duration(seconds: 1),
+    Duration refreshNotificationProgress = const Duration(milliseconds: 100),
     bool showDownloadSpeed = true,
     bool showNotificationWithoutProgress = false,
     bool receiveBytesAsMB = false,
@@ -213,29 +213,29 @@ class TBIBFileUploader {
             pathApi,
             data: data,
             onSendProgress: (count, total) {
-              if (showNewNotification && showNotification) {
-                showNewNotification = false;
-                if (Platform.isAndroid) {
-                  _onSendProgress(
-                    count,
-                    total,
-                    startTime: startTime,
-                    refreshNotificationProgress: refreshNotificationProgress,
-                    showNotification: showDownloadSpeed,
-                    showDownloadSpeed: showDownloadSpeed,
-                    receiveBytesAsMB: receiveBytesAsMB,
-                    showNotificationWithoutProgress:
-                        showNotificationWithoutProgress,
-                    onSendProgress: onSendProgress,
-                  );
-                } else {
-                  notificationDisplayDate = DateTime.now();
-                  if (notificationDisplayDate.millisecondsSinceEpoch >
-                      endTime.millisecondsSinceEpoch) {
-                    //   await AwesomeNotifications().dismiss(1);
+              if (showNotification) {
+                final now = DateTime.now();
+                if (showNewNotification || now.isAfter(endTime)) {
+                  showNewNotification = false;
+
+                  if (Platform.isAndroid) {
+                    _onSendProgress(
+                      count,
+                      total,
+                      startTime: startTime,
+                      refreshNotificationProgress: refreshNotificationProgress,
+                      showNotification: showDownloadSpeed,
+                      showDownloadSpeed: showDownloadSpeed,
+                      receiveBytesAsMB: receiveBytesAsMB,
+                      showNotificationWithoutProgress:
+                          showNotificationWithoutProgress,
+                      onSendProgress: onSendProgress,
+                    );
+                  } else {
+                    // iOS-specific updates
+                    notificationDisplayDate = now;
+                    endTime = now.add(refreshNotificationProgress);
                     showNewNotification = true;
-                    notificationDisplayDate = endTime;
-                    endTime = DateTime.now().add(refreshNotificationProgress);
                   }
                 }
               }
@@ -334,38 +334,44 @@ class TBIBFileUploader {
   }
 
   Future<void> _showProgressNotification(
-    // bool receiveBytesAsFileSizeUnit,
     bool showDownloadSpeed,
     int totalBytes,
     int receivedBytes,
-    // String fileName,
     DateTime startTime,
   ) async {
-    final num progress = math.min(receivedBytes / totalBytes * 100, 100);
-    final num totalMB = formatBytes(totalBytes, 2).size;
-    final num receivedMB = formatBytes(receivedBytes, 2).size;
-    // String receiveUnit = formatBytes(receivedBytes, 2).unit;
-    final totalUnit = formatBytes(totalBytes, 2).unit;
+    // Calculate progress
+    final progress =
+        totalBytes > 0 ? math.min(receivedBytes / totalBytes * 100, 100) : 0;
 
-    var speedMbps = 0.0;
+    // Format bytes into human-readable units
+    final totalData = formatBytes(totalBytes, 2);
+    final receivedData = formatBytes(receivedBytes, 2);
+    final totalMB = totalData.size;
+    final receivedMB = receivedData.size;
+    final totalUnit = totalData.unit;
+
+    // Calculate download speed
+    var speedMBps = 0.0;
     if (showDownloadSpeed) {
       final duration = DateTime.now().difference(startTime);
-      final seconds = duration.inMilliseconds / 1000;
-      speedMbps = receivedMB / seconds * 8;
+      final seconds =
+          duration.inMilliseconds > 0 ? duration.inMilliseconds / 1000 : 1;
+      speedMBps = receivedBytes / seconds / (1024 * 1024); // Speed in MB/s
     }
-    // dev.log(
-    //     'after noti receivedBytes: $receivedBytes, totalBytes: $totalBytes progress: $progress');
+
+    // Send notification
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
         channelKey: 'upload_channel',
         title: 'Uploading',
         body:
-            'Uploading  ${totalBytes >= 0 ? '(${receivedMB.toStringAsFixed(2)} / ${totalMB.toStringAsFixed(2)})' : '${receivedMB.toStringAsFixed(2)} / nil'} $totalUnit ${speedMbps == 0 ? "" : 'speed ${(speedMbps / 8).toStringAsFixed(2)} MB/s'} ',
+            'Uploading (${receivedMB.toStringAsFixed(2)} / ${totalMB.toStringAsFixed(2)} $totalUnit) '
+            '${speedMBps > 0 ? 'Speed: ${speedMBps.toStringAsFixed(2)} MB/s' : ''}',
         notificationLayout: NotificationLayout.ProgressBar,
         wakeUpScreen: true,
         locked: true,
-        progress: progress.toDouble(),
+        progress: progress.clamp(0, 100).toDouble(),
       ),
     );
   }
