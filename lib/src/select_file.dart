@@ -9,6 +9,19 @@ import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 /// A [Select File] that contains a [FileUploader].
 class SelectFile extends StatefulWidget {
+  const SelectFile({
+    required this.selectFileOrImage,
+    required this.maxFileSize,
+    required this.changeFileNameTo,
+    required this.allowedExtensions,
+    required this.imageQuality,
+    required this.selectImageCamera,
+    required this.selectImageGallery,
+    required this.selectFile,
+    required this.fileType,
+    super.key,
+  });
+
   /// [selectFileOrImage] is a function that returns a [FileUploader].
   final void Function({
     required String? path,
@@ -39,19 +52,6 @@ class SelectFile extends StatefulWidget {
 
   /// [fileType] is a FileType.
   final FileType? fileType;
-
-  const SelectFile({
-    required this.selectFileOrImage,
-    required this.maxFileSize,
-    required this.changeFileNameTo,
-    required this.allowedExtensions,
-    required this.imageQuality,
-    required this.selectImageCamera,
-    required this.selectImageGallery,
-    required this.selectFile,
-    required this.fileType,
-    super.key,
-  });
 
   @override
   State<SelectFile> createState() => _SelectFileState();
@@ -102,7 +102,7 @@ class _SelectFileState extends State<SelectFile> {
                     error: file.error,
                   );
                 } catch (e) {
-                  if (!e.toString().contains("Null check")) {
+                  if (!e.toString().contains('Null check')) {
                     if (Platform.isAndroid &&
                         await checkPermission(PermissionType.storage) ==
                             false) {
@@ -131,6 +131,8 @@ class _SelectFileState extends State<SelectFile> {
                 ),
               ),
               onPressed: () async {
+                Navigator.pop(context);
+
                 try {
                   final image = await selectImageGalleryAsync(
                     maxSize: widget.maxFileSize,
@@ -143,7 +145,7 @@ class _SelectFileState extends State<SelectFile> {
                     error: image.error,
                   );
                 } catch (e) {
-                  if (!e.toString().contains("Null check")) {
+                  if (!e.toString().contains('Null check')) {
                     if (Platform.isAndroid &&
                         await checkPermission(PermissionType.storage) ==
                             false) {
@@ -178,6 +180,8 @@ class _SelectFileState extends State<SelectFile> {
                 ),
               ),
               onPressed: () async {
+                Navigator.pop(context);
+
                 try {
                   final image = await selectImageCameraAsync(
                     maxSize: widget.maxFileSize,
@@ -190,7 +194,7 @@ class _SelectFileState extends State<SelectFile> {
                     error: image.error,
                   );
                 } catch (e) {
-                  if (!e.toString().contains("Null check")) {
+                  if (!e.toString().contains('Null check')) {
                     if (await checkPermission(PermissionType.camera)) {
                       throw Exception(e);
                     } else {
