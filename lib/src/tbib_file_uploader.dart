@@ -157,7 +157,7 @@ class TBIBFileUploader {
   }
 
   /// upload file and receive response
-  Future<Map<String, dynamic>> startUploadFileWithResponse({
+  Future<Response<Map<String, dynamic>>?> startUploadFileWithResponse({
     /// your dio
     required Dio dio,
 
@@ -180,13 +180,12 @@ class TBIBFileUploader {
     if (_uploadStarted) {
       log('Upload already started');
 
-      return {};
+      return null;
     }
     final data = yourData;
 
     var showNewNotification = true;
     final startTime = DateTime.now();
-    var notificationDisplayDate = DateTime.now();
     var endTime = DateTime.now().add(refreshNotificationProgress);
     if (Platform.isIOS && showNotification) {
       await AwesomeNotifications().createNotification(
@@ -233,7 +232,6 @@ class TBIBFileUploader {
                     );
                   } else {
                     // iOS-specific updates
-                    notificationDisplayDate = now;
                     endTime = now.add(refreshNotificationProgress);
                     showNewNotification = true;
                   }
@@ -256,10 +254,10 @@ class TBIBFileUploader {
           ),
         );
       }
-      return result.data!;
+      return result;
     } catch (e) {
       _uploadStarted = false;
-      return {};
+      return null;
     }
   }
 
@@ -348,7 +346,6 @@ class TBIBFileUploader {
     final receivedData = formatBytes(receivedBytes, 2);
     final totalMB = totalData.size;
     final receivedMB = receivedData.size;
-    final totalUnit = totalData.unit;
 
     // Calculate download speed
     var speedMBps = 0.0;
@@ -366,7 +363,7 @@ class TBIBFileUploader {
         channelKey: 'upload_channel',
         title: 'Uploading',
         body:
-            'Uploading (${receivedMB.toStringAsFixed(2)} / ${totalMB.toStringAsFixed(2)} $totalUnit) '
+            'Uploading (${receivedMB.toStringAsFixed(2)} / ${totalMB.toStringAsFixed(2)} MB)'
             '${speedMBps > 0 ? 'Speed: ${speedMBps.toStringAsFixed(2)} MB/s' : ''}',
         notificationLayout: NotificationLayout.ProgressBar,
         wakeUpScreen: true,

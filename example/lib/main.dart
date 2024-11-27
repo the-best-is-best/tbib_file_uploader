@@ -231,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             if (selectedFile == null) return;
-                            Map<String, dynamic> dataApi =
+                            Response<Map<String, dynamic>>? dataApi =
                                 await TBIBFileUploader()
                                     .startUploadFileWithResponse(
                               dio: Dio(
@@ -252,7 +252,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 },
                               ),
                             );
-                            var res = ApiModel.fromMap(dataApi);
+                            var res = ApiModel.fromMap(dataApi!.data!);
                             log(res.toJson());
                           }
                         },
