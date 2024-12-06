@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:example/src/api_model.dart';
 import 'package:example/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 void main() async {
@@ -240,6 +241,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               pathApi: 'files/upload',
+                              showNotification: selectedFile != null &&
+                                  await Permission.notification.isGranted,
                               method: 'POST',
                               yourData: FormData.fromMap(
                                 {
