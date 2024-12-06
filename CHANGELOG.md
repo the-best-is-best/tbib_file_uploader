@@ -1,3 +1,7 @@
+## 2.2.4
+
+- Fix POST_NOTIFICATIONS permission not added
+
 ## 2.2.0 to 2.2.3
 
 - fix bugs
