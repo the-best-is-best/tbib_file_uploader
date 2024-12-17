@@ -1,3 +1,7 @@
+## 2.2.5
+
+- Update dep
+
 ## 2.2.4
 
 - Fix POST_NOTIFICATIONS permission not added

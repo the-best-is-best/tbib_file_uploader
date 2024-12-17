@@ -120,12 +120,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                   },
                                   allowedExtensions: const [
                                     // FileExtensions.DOCX,
-                                    // FileExtensions.PDF,
+                                    FileExtensions.PDF,
                                     FileExtensions.JPG,
                                     FileExtensions.PNG
                                   ],
-                                  maxFileSize: 2,
-                                  fileType: FileType.image,
+                                  //  fileType: FileType.,
                                   // displayNote: '',
                                   // selectImageGallery: false,
                                   // selectImageCamera: false,
