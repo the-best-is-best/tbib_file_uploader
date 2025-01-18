@@ -119,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     }
                                     return null;
                                   },
+                                  selectMultiImage: false,
                                   allowedExtensions: const [
                                     // FileExtensions.DOCX,
                                     FileExtensions.PDF,
@@ -199,6 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   selectedFile: ({name, path}) {
                                     selectedFile = File(path![0]!);
                                   },
+                                  showFileName: true,
                                   maxFileSize: 12,
                                   style: const TBIBUploaderStyle(
                                       labelText: 'Please select file 1'),

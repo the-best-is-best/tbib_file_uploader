@@ -123,10 +123,8 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
                 allowedExtensions: widget.allowedExtensions,
                 canDownloadFile:
                     widget.selectMultiImage ? false : widget.canDownloadFile,
-                showFileName:
-                    widget.selectMultiImage ? false : widget.showFileName,
-                changeFileNameTo:
-                    widget.selectMultiImage ? null : widget.changeFileNameTo,
+                showFileName: widget.showFileName,
+                changeFileNameTo: widget.changeFileNameTo,
                 autovalidateMode: widget.autovalidateMode,
                 displayNote:
                     widget.selectMultiImage ? null : widget.displayNote,
