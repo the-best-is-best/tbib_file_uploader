@@ -44,7 +44,7 @@ class TBIBUploaderStyle {
     this.labelText,
     this.labelStyle,
     this.hintText,
-    this.selectFile = "Selected File",
+    this.selectFile = "Select File",
     this.selectFileStyle = const TextStyle(color: Colors.black),
     this.iconColor = Colors.black,
     this.fileUploaderIcon,

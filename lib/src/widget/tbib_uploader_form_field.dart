@@ -20,19 +20,31 @@ Future<void> _selectFileOrImage(
     await selectMultiImage(
       context: context,
       selectedFiles: ({name, path}) {
-        state.didChange({
-          'path': path,
-          'name': name,
-          'error': null,
-          'isHide': false,
-          'showError': true,
-        });
-        selectedFile?.call(name: name, path: path);
+        if (name != null && path != null) {
+          state.didChange({
+            'path': path,
+            'name': name,
+            'error': null,
+            'isHide': false,
+            'showError': true,
+          });
+          selectedFile?.call(name: name, path: path);
+        } else {
+          // Handle cancel by clearing the fields
+          state.didChange({
+            'path': null,
+            'name': null,
+            'error': null,
+            'isHide': false,
+            'showError': false,
+          });
+          selectedFile?.call(name: null, path: null);
+        }
       },
     );
     return;
   }
-  await showModalBottomSheet<String?>(
+  final selected = await showModalBottomSheet<String?>(
     context: context,
     builder: (context) {
       return SelectFile(
@@ -45,15 +57,26 @@ Future<void> _selectFileOrImage(
         allowedExtensions: allowedExtensions,
         fileType: fileType,
         selectFileOrImage: ({path, name, error}) {
-          state.didChange({
-            'path': path,
-            'name': name,
-            'error': error,
-            'isHide': false,
-            'showError': true,
-          });
-
-          selectedFile?.call(name: [name], path: [path]);
+          if (path != null && name != null) {
+            state.didChange({
+              'path': path,
+              'name': name,
+              'error': error,
+              'isHide': false,
+              'showError': true,
+            });
+            selectedFile?.call(name: [name], path: [path]);
+          } else {
+            // Handle cancel by clearing the fields
+            state.didChange({
+              'path': null,
+              'name': null,
+              'error': null,
+              'isHide': false,
+              'showError': false,
+            });
+            selectedFile?.call(name: null, path: null);
+          }
         },
       );
     },
