@@ -180,9 +180,17 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                     ? style?.labelText ?? 'Please Select File'
                     : style?.selectMultiImage == true
                         ? '${style?.selectFile ?? 'File Selected'} (${(data['path'] as List<String>).length})'
-                        : changeFileNameTo != null && showFileName
-                            ? (data['path'] as List<String>)[0].split('/').last
-                            : style?.selectFile ?? 'File Selected';
+                        : changeFileNameTo != null
+                            ? changeFileNameTo
+                            : changeFileNameTo == null && showFileName
+                                ? (data['path'] is List<String>)
+                                    ? (data['path'] as List<String>)[0]
+                                        .split('/')
+                                        .last
+                                    : data['path'].split('/').last ??
+                                        style?.selectFile ??
+                                        'File Selected'
+                                : style?.selectFile ?? 'File Selected';
               }
             }
             return Padding(
