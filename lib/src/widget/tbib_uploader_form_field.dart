@@ -44,7 +44,7 @@ Future<void> _selectFileOrImage(
     );
     return;
   }
-  final selected = await showModalBottomSheet<String?>(
+  await showModalBottomSheet<String?>(
     context: context,
     builder: (context) {
       return SelectFile(
@@ -291,7 +291,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                               horizontal: 20,
                             ),
                             child: Text(
-                              """Note: ${maxFileSize != null ? 'File size should be less than $maxFileSize MB' : ''}${maxFileSize != null && allowedExtensions != null ? ' and' : ''} ${allowedExtensions == null || allowedExtensions.isEmpty ? '' : 'file type should be ${allowedExtensions.join(' , ')}'}""",
+                              """Note: ${maxFileSize != null ? 'File size should be less than $maxFileSize MB' : ''} ${maxFileSize != null && allowedExtensions != null ? 'and' : ''} ${allowedExtensions == null || allowedExtensions.isEmpty ? '' : 'file type should be ${allowedExtensions.map((e) => e.name).join(', ')}'}""",
                               style: style?.noteStyle ??
                                   const TextStyle(
                                     color: Colors.black,
