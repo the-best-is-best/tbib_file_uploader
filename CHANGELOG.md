@@ -1,3 +1,8 @@
+## 2.2.8
+
+- Fix bug
+- update dep
+
 ## 2.2.6 - 2.2.7
 
 - add swift package support
