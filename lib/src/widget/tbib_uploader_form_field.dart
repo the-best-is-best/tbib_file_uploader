@@ -62,6 +62,50 @@ Future<void> _selectFileOrImage(
 
 /// A [FormField] that contains a [FileUploader].
 class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
+  /// Select File data
+  final void Function({List<String?>? path, List<String?>? name})? selectedFile;
+
+  /// [downloadFileOnPressed] if [canDownloadFile] is true, you can download f
+  /// ile after upload.
+  final void Function()? downloadFileOnPressed;
+
+  /// [allowedExtensions] if use select from storage will display only this extensions.
+  final List<FileExtensions>? allowedExtensions;
+
+  /// [canDownloadFile] if true, you can download file after upload.
+  final bool canDownloadFile;
+
+  /// [changeFileNameTo] Change file name after selected
+  final String? changeFileNameTo;
+
+  /// [displayNote] to display note.
+  final String? displayNote;
+
+  /// [imageQuality] is a number between 0 and 100.
+  final int? imageQuality;
+
+  /// [maxFileSize] by MB.
+  final int? maxFileSize;
+
+  /// [showFileName] is a bool to show file name work
+  /// if you change file name from [changeFileNameTo].
+  final bool showFileName;
+
+  /// File Uploader Style
+  final TBIBUploaderStyle? style;
+
+  /// [fileType] is a FileType to select file type.
+  final FileType? fileType;
+
+  /// [selectFile] is a bool to select file.
+  final bool selectFile;
+
+  /// [selectImageGallery] is a bool to select image from gallery.
+  final bool selectImageGallery;
+
+  /// [selectImageCamera] is a bool to select image from camera.
+  final bool selectImageCamera;
+
   /// Creates a [TBIBUploaderFormField] that contains a [FileUploader].
   TBIBUploaderFormField({
     required this.selectedFile,
@@ -110,12 +154,12 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                   formState.value != null &&
                   formState.value!['showError'] == true) {
                 textEditingController.text = data['path'] == null
-                    ? style?.selectFile ?? 'File Selected'
+                    ? style?.labelText ?? 'Please Select File'
                     : style?.selectMultiImage == true
                         ? '${style?.selectFile ?? 'File Selected'} (${(data['path'] as List<String>).length})'
                         : changeFileNameTo != null && showFileName
                             ? (data['path'] as List<String>)[0].split('/').last
-                            : 'File Selected';
+                            : style?.selectFile ?? 'File Selected';
               }
             }
             return Padding(
@@ -256,48 +300,4 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
             );
           },
         );
-
-  /// Select File data
-  final void Function({List<String?>? path, List<String?>? name})? selectedFile;
-
-  /// [downloadFileOnPressed] if [canDownloadFile] is true, you can download f
-  /// ile after upload.
-  final void Function()? downloadFileOnPressed;
-
-  /// [allowedExtensions] if use select from storage will display only this extensions.
-  final List<FileExtensions>? allowedExtensions;
-
-  /// [canDownloadFile] if true, you can download file after upload.
-  final bool canDownloadFile;
-
-  /// [changeFileNameTo] Change file name after selected
-  final String? changeFileNameTo;
-
-  /// [displayNote] to display note.
-  final String? displayNote;
-
-  /// [imageQuality] is a number between 0 and 100.
-  final int? imageQuality;
-
-  /// [maxFileSize] by MB.
-  final int? maxFileSize;
-
-  /// [showFileName] is a bool to show file name work
-  /// if you change file name from [changeFileNameTo].
-  final bool showFileName;
-
-  /// File Uploader Style
-  final TBIBUploaderStyle? style;
-
-  /// [fileType] is a FileType to select file type.
-  final FileType? fileType;
-
-  /// [selectFile] is a bool to select file.
-  final bool selectFile;
-
-  /// [selectImageGallery] is a bool to select image from gallery.
-  final bool selectImageGallery;
-
-  /// [selectImageCamera] is a bool to select image from camera.
-  final bool selectImageCamera;
 }
