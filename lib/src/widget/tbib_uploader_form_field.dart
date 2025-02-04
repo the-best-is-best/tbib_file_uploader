@@ -236,7 +236,9 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                               : style.hideBorder
                                   ? InputBorder.none
                                   : null,
-                          errorText: data['enableValidatorError'] != null
+                          errorText: data['enableValidatorError']
+                                  .toString()
+                                  .isNotEmpty
                               ? data['enableValidatorError']
                               : data['showError'] == false
                                   ? null
