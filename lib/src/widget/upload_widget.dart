@@ -14,8 +14,8 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [allowedExtensions] is a list of allowed file extensions.
   final List<FileExtensions>? allowedExtensions;
 
-  /// [canDownloadFile] is a boolean to download file.
-  final bool canDownloadFile;
+  // /// [canDownloadFile] is a boolean to download file.
+  // final bool canDownloadFile;
 
   /// [showFileName] is a boolean to show file name.
   final bool showFileName;
@@ -73,7 +73,6 @@ class TBIBUploaderFile extends StatefulWidget {
       this.selectMultiImage = false,
       this.isHide = false,
       this.allowedExtensions,
-      this.canDownloadFile = false,
       this.showFileName = false,
       this.changeFileNameTo,
       this.displayNote,
@@ -124,8 +123,8 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
                 isSelectedFile: widget.isSelectedFile,
                 validator: widget.isHide ? null : widget.validator,
                 allowedExtensions: widget.allowedExtensions,
-                canDownloadFile:
-                    widget.selectMultiImage ? false : widget.canDownloadFile,
+                // canDownloadFile:
+                //     widget.selectMultiImage ? false : widget.canDownloadFile,
                 showFileName: widget.showFileName,
                 changeFileNameTo: widget.changeFileNameTo,
                 autovalidateMode: widget.autovalidateMode,

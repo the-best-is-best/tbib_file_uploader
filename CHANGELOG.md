@@ -1,3 +1,7 @@
+## 2.3.0
+
+canDownload bool has been removed
+
 ## 2.3.0+beta1
 
 - Add isSelectedFile

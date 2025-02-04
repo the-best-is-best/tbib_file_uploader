@@ -95,9 +95,6 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   /// [allowedExtensions] if use select from storage will display only this extensions.
   final List<FileExtensions>? allowedExtensions;
 
-  /// [canDownloadFile] if true, you can download file after upload.
-  final bool canDownloadFile;
-
   /// [changeFileNameTo] Change file name after selected
   final String? changeFileNameTo;
 
@@ -142,7 +139,6 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
     this.fileType,
     this.displayNote,
     this.style,
-    this.canDownloadFile = false,
     this.showFileName = false,
     this.selectFile = true,
     this.selectImageCamera = true,
@@ -278,7 +274,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                   );
                                 },
                               ),
-                              if (canDownloadFile) ...{
+                              if (downloadFileOnPressed != null) ...{
                                 IconButton(
                                   icon: style?.fileDownloadIcon ??
                                       Icon(
