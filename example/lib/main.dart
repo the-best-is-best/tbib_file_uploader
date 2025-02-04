@@ -112,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     borderRadius: BorderRadius.circular(30)),
                                 child: TBIBUploaderFile(
                                   showFileName: true,
+                                  isSelectedFile: true,
                                   isHide: isHide,
                                   validator: (p0) {
                                     if (selectedFile == null) {

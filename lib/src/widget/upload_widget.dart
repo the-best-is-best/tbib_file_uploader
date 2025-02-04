@@ -63,28 +63,31 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [fileType] is a [FileType] to select file type.
   final FileType? fileType;
 
-  const TBIBUploaderFile({
-    required this.selectedFile,
-    super.key,
-    this.validator,
-    this.selectMultiImage = false,
-    this.isHide = false,
-    this.allowedExtensions,
-    this.canDownloadFile = false,
-    this.showFileName = false,
-    this.changeFileNameTo,
-    this.displayNote,
-    this.downloadFileOnPressed,
-    this.imageQuality,
-    this.maxFileSize,
-    this.selectFile = true,
-    this.selectImageGallery = true,
-    this.selectImageCamera = true,
-    this.style,
-    this.children,
-    this.autovalidateMode = AutovalidateMode.onUserInteraction,
-    this.fileType,
-  });
+  /// [isSelectedFile]
+  final bool isSelectedFile;
+
+  const TBIBUploaderFile(
+      {required this.selectedFile,
+      super.key,
+      this.validator,
+      this.selectMultiImage = false,
+      this.isHide = false,
+      this.allowedExtensions,
+      this.canDownloadFile = false,
+      this.showFileName = false,
+      this.changeFileNameTo,
+      this.displayNote,
+      this.downloadFileOnPressed,
+      this.imageQuality,
+      this.maxFileSize,
+      this.selectFile = true,
+      this.selectImageGallery = true,
+      this.selectImageCamera = true,
+      this.style,
+      this.children,
+      this.autovalidateMode = AutovalidateMode.onUserInteraction,
+      this.fileType,
+      this.isSelectedFile = false});
 
   @override
   State<TBIBUploaderFile> createState() => _UploaderFileState();
@@ -118,7 +121,7 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
             } else ...{
               TBIBUploaderFormField(
                 //  key: _formFieldKey,
-
+                isSelectedFile: widget.isSelectedFile,
                 validator: widget.isHide ? null : widget.validator,
                 allowedExtensions: widget.allowedExtensions,
                 canDownloadFile:

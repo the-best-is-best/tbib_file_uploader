@@ -1,3 +1,8 @@
+## 2.3.0+beta1
+
+- Add isSelectedFile
+- update dep
+
 ## 2.2.8 - 2.2.9 - 2.2.10 - 2.2.11
 
 - Fix bug

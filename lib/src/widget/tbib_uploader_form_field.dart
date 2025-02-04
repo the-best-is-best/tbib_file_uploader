@@ -129,6 +129,8 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   /// [selectImageCamera] is a bool to select image from camera.
   final bool selectImageCamera;
 
+  final bool isSelectedFile;
+
   /// Creates a [TBIBUploaderFormField] that contains a [FileUploader].
   TBIBUploaderFormField({
     required this.selectedFile,
@@ -145,6 +147,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
     this.selectFile = true,
     this.selectImageCamera = true,
     this.selectImageGallery = true,
+    required this.isSelectedFile,
     super.key,
     // super.onSaved,
     super.validator,
@@ -237,7 +240,9 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                               : (data['error'].toString().contains('null')
                                   ? null
                                   : data['error'].toString()),
-                          labelText: style?.labelText,
+                          labelText: isSelectedFile
+                              ? style?.selectFile ?? 'Selected File'
+                              : style?.labelText,
                           hintText: style?.hintText ?? 'Select File',
                           labelStyle: style?.labelStyle ??
                               const TextStyle(
