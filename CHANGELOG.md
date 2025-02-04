@@ -1,3 +1,7 @@
+## 2.3.1
+
+- Fix bugs
+
 ## 2.3.0
 
 canDownload bool has been removed

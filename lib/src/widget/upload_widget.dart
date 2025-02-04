@@ -130,9 +130,7 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
                 autovalidateMode: widget.autovalidateMode,
                 displayNote:
                     widget.selectMultiImage ? null : widget.displayNote,
-                downloadFileOnPressed: widget.selectMultiImage
-                    ? null
-                    : widget.downloadFileOnPressed,
+                downloadFileOnPressed: widget.downloadFileOnPressed,
                 imageQuality: widget.imageQuality,
                 maxFileSize: widget.maxFileSize,
                 selectFile: widget.selectMultiImage ? false : widget.selectFile,
