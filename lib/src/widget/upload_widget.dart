@@ -66,6 +66,8 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [isSelectedFile]
   final bool isSelectedFile;
 
+  final String? Function(Map<String, dynamic>?)? enableSelectFile;
+
   const TBIBUploaderFile(
       {required this.selectedFile,
       super.key,
@@ -84,6 +86,7 @@ class TBIBUploaderFile extends StatefulWidget {
       this.selectImageCamera = true,
       this.style,
       this.children,
+      this.enableSelectFile,
       this.autovalidateMode = AutovalidateMode.onUserInteraction,
       this.fileType,
       this.isSelectedFile = false});
@@ -119,6 +122,7 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
               const SizedBox.shrink(),
             } else ...{
               TBIBUploaderFormField(
+                enableSelectFile: widget.enableSelectFile,
                 //  key: _formFieldKey,
                 isSelectedFile: widget.isSelectedFile,
                 validator: widget.isHide ? null : widget.validator,

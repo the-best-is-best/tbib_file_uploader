@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hide = false;
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  String enterValue = '';
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +115,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   showFileName: true,
                                   isSelectedFile: true,
                                   isHide: isHide,
+                                  enableSelectFile: (_) {
+                                    if (enterValue.isEmpty) {
+                                      return 'please enter value in text field first';
+                                    }
+                                    return null;
+                                  },
                                   validator: (p0) {
                                     if (selectedFile == null) {
                                       return 'Please select file';
@@ -138,6 +145,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   },
                                   children: [
                                     TextFormField(
+                                      onChanged: (v) {
+                                        enterValue = v;
+                                      },
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Please enter some text';

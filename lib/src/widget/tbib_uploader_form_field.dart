@@ -128,6 +128,8 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
 
   final bool isSelectedFile;
 
+  final String? Function(Map<String, dynamic>?)? enableSelectFile;
+
   /// Creates a [TBIBUploaderFormField] that contains a [FileUploader].
   TBIBUploaderFormField({
     required this.selectedFile,
@@ -144,6 +146,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
     this.selectImageCamera = true,
     this.selectImageGallery = true,
     required this.isSelectedFile,
+    this.enableSelectFile,
     super.key,
     // super.onSaved,
     super.validator,
@@ -164,12 +167,14 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
               'name': null,
               'error': null,
               'showError': false,
+              'enableValidatorError': '',
             };
             data = formState.value ?? data;
 
             if (formState.hasError) {
               data['error'] = data['error'] ?? formState.errorText;
               data['showError'] = true;
+              data['enableValidatorError'] = data['enableValidatorError'];
               textEditingController.text = '';
             } else {
               if (!formState.hasError &&
@@ -231,11 +236,13 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                               : style.hideBorder
                                   ? InputBorder.none
                                   : null,
-                          errorText: data['showError'] == false
-                              ? null
-                              : (data['error'].toString().contains('null')
+                          errorText: data['enableValidatorError'] != null
+                              ? data['enableValidatorError']
+                              : data['showError'] == false
                                   ? null
-                                  : data['error'].toString()),
+                                  : (data['error'].toString().contains('null')
+                                      ? null
+                                      : data['error'].toString()),
                           labelText: isSelectedFile
                               ? style?.selectFile ?? 'Selected File'
                               : style?.labelText,
@@ -256,6 +263,15 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                       color: style?.iconColor ?? Colors.black,
                                     ),
                                 onPressed: () async {
+                                  if (enableSelectFile
+                                          ?.call(data)
+                                          ?.isNotEmpty ==
+                                      true) {
+                                    data['enableValidatorError'] =
+                                        enableSelectFile!.call(data);
+                                    formState.didChange(data);
+                                    return;
+                                  }
                                   await _selectFileOrImage(
                                     context,
                                     maxFileSize,

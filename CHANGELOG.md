@@ -1,3 +1,7 @@
+## 2.3.2
+
+- enableSelectFile this is validation work before select file
+
 ## 2.3.1
 
 - Fix bugs
