@@ -22,12 +22,9 @@ This package for upload file you can display notifications and progress notifica
 
 <h3> step 1 </h3>
 
-```swift
- Change
-  BUILD_LIBRARY_FOR_DISTRIBUTION = NO 
- to 
- BUILD_LIBRARY_FOR_DISTRIBUTION = NO  
- ```
+ Change BUILD_LIBRARY_FOR_DISTRIBUTION to NO
+
+<img  src="https://github.com/the-best-is-best/tbib_file_uploader/blob/main/github_assets/xcode_change_need.png?raw=true" height="300"></img>
 
 <p> add this in Info.plist </p>
 
@@ -99,4 +96,35 @@ selectFileOrImage(
           selectImageCamera: true,
           selectImageGallery: true);
 
+```
+
+<br>
+<h1> How uplaod data </h1>
+
+```dart
+Response<Map<String, dynamic>>? dataApi =
+                                await TBIBFileUploader()
+                                    .startUploadFileWithResponse(
+                              dio: Dio(
+                                BaseOptions(
+                                  baseUrl: 'https://api.escuelajs.co/api/v1/',
+                                ),
+                              ),
+                              pathApi: 'files/upload',
+                              method: 'POST',
+                              yourData: FormData.fromMap(
+                                {
+                                  'file': MultipartFile.fromFileSync(
+                                    selectedFile!.path,
+                                    filename: selectedFile!.path
+                                        .split(Platform.pathSeparator)
+                                        .last,
+                                  ),
+                                },
+                              ),
+                            );
+                            if(dataApi?.data != null){
+                            var res = ApiModel.fromMap(dataApi!.data!);
+                            log(res.toJson());
+                            }
 ```

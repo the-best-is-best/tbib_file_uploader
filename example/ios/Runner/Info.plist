@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Example</string>
+	<string>Tbib File Uploader</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>example</string>
+	<string>tbib_file_uploader_example</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -41,21 +41,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-
-
-    <key>NSPhotoLibraryUsageDescription</key>
-<string>This app needs access to your photo library to allow you to select a photo to use as your profile picture.</string>
-
-<key>NSCameraUsageDescription</key>
-<string>This app needs access to your camera to allow you to take a photo to use as your profile picture.</string>
-
-<key>NSMicrophoneUsageDescription</key>
-<string>This app needs access to your microphone to allow you to record a video to use as your profile picture.</string>
 </dict>
 </plist>

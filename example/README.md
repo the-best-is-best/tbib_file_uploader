@@ -1,6 +1,6 @@
-# example
+# tbib_file_uploader_example
 
-A new Flutter project.
+Demonstrates how to use the tbib_file_uploader plugin.
 
 ## Getting Started
 

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:example/src/api_model.dart';
 import 'package:example/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:tbib_file_uploader/tbib_file_uploader.dart';
 
 void main() async {
@@ -29,8 +30,6 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -42,6 +41,8 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+  const MyHomePage({super.key, required this.title});
+
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -50,21 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hide = false;
   File? selectedFile;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      selectFileOrImage(
-          context: context,
-          selectedFile: ({String? name, String? path}) {
-            log('selectedFile: $name , $path');
-          },
-          selectFile: false,
-          selectImageCamera: true,
-          selectImageGallery: true);
-    });
-  }
+  String enterValue = '';
 
   @override
   Widget build(BuildContext context) {
@@ -125,31 +112,42 @@ class _MyHomePageState extends State<MyHomePage> {
                                         width: isHide ? 0 : 1),
                                     borderRadius: BorderRadius.circular(30)),
                                 child: TBIBUploaderFile(
+                                  showFileName: true,
+                                  isSelectedFile: true,
                                   isHide: isHide,
+                                  enableSelectFile: (_) {
+                                    if (enterValue.isEmpty) {
+                                      return 'please enter value in text field first';
+                                    }
+                                    return null;
+                                  },
                                   validator: (p0) {
                                     if (selectedFile == null) {
                                       return 'Please select file';
                                     }
                                     return null;
                                   },
+                                  selectMultiImage: false,
                                   allowedExtensions: const [
                                     // FileExtensions.DOCX,
-                                    // FileExtensions.PDF,
+                                    FileExtensions.PDF,
                                     FileExtensions.JPG,
-                                    // FileExtensions.PNG
+                                    FileExtensions.PNG
                                   ],
-                                  maxFileSize: 2,
-                                  fileType: FileType.image,
+                                  //  fileType: FileType.,
                                   // displayNote: '',
                                   // selectImageGallery: false,
                                   // selectImageCamera: false,
                                   selectedFile: ({name, path}) {
                                     if (path == null) return;
                                     log('selectedFile $name $path');
-                                    selectedFile = File(path);
+                                    selectedFile = File(path[0]!);
                                   },
                                   children: [
                                     TextFormField(
+                                      onChanged: (v) {
+                                        enterValue = v;
+                                      },
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Please enter some text';
@@ -163,13 +161,13 @@ class _MyHomePageState extends State<MyHomePage> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              // ElevatedButton(
-                              //     onPressed: () async {
-                              //       builderSetState(() {
-                              //         isHide = !isHide;
-                              //       });
-                              //     },
-                              //     child: const Text('Hide')),
+                              ElevatedButton(
+                                  onPressed: () async {
+                                    builderSetState(() {
+                                      isHide = !isHide;
+                                    });
+                                  },
+                                  child: const Text('Hide')),
                             ],
                           ),
                         );
@@ -208,9 +206,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                   allowedExtensions: const [
                                     FileExtensions.XLS,
                                     FileExtensions.XLSX,
-                                    FileExtensions.JPEG,
+                                    FileExtensions.PDF,
                                   ],
-                                  selectedFile: ({name, path}) {},
+                                  selectedFile: ({name, path}) {
+                                    selectedFile = File(path![0]!);
+                                  },
+                                  showFileName: true,
                                   maxFileSize: 12,
                                   style: const TBIBUploaderStyle(
                                       labelText: 'Please select file 1'),
@@ -244,7 +245,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             if (selectedFile == null) return;
-                            Map<String, dynamic> dataApi =
+                            Response<Map<String, dynamic>>? dataApi =
                                 await TBIBFileUploader()
                                     .startUploadFileWithResponse(
                               dio: Dio(
@@ -253,6 +254,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                               pathApi: 'files/upload',
+                              showNotification: selectedFile != null &&
+                                  await Permission.notification.isGranted,
                               method: 'POST',
                               yourData: FormData.fromMap(
                                 {
@@ -265,7 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 },
                               ),
                             );
-                            var res = ApiModel.fromMap(dataApi);
+                            var res = ApiModel.fromMap(dataApi!.data!);
                             log(res.toJson());
                           }
                         },
@@ -279,5 +282,20 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      selectFileOrImage(
+          context: context,
+          selectedFile: ({String? name, String? path}) {
+            log('selectedFile: $name , $path');
+          },
+          selectFile: false,
+          selectImageCamera: true,
+          selectImageGallery: true);
+    });
   }
 }

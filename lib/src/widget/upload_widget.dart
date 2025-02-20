@@ -14,8 +14,8 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [allowedExtensions] is a list of allowed file extensions.
   final List<FileExtensions>? allowedExtensions;
 
-  /// [canDownloadFile] is a boolean to download file.
-  final bool canDownloadFile;
+  // /// [canDownloadFile] is a boolean to download file.
+  // final bool canDownloadFile;
 
   /// [showFileName] is a boolean to show file name.
   final bool showFileName;
@@ -44,8 +44,12 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [Select Image Camera] to select image from camera.
   final bool selectImageCamera;
 
+  /// [selectMultiImage] to select multi image from gallery not support camera
+  /// or files.
+  final bool selectMultiImage;
+
   /// [selectedFile] is a function to select file.
-  final Function({String? name, String? path})? selectedFile;
+  final void Function({List<String?>? name, List<String?>? path})? selectedFile;
 
   /// [children] is a list of widgets.
   final List<Widget>? children;
@@ -59,55 +63,45 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [fileType] is a [FileType] to select file type.
   final FileType? fileType;
 
-  const TBIBUploaderFile({
-    required this.selectedFile,
-    super.key,
-    this.validator,
-    this.isHide = false,
-    this.allowedExtensions,
-    this.canDownloadFile = false,
-    this.showFileName = false,
-    this.changeFileNameTo,
-    this.displayNote,
-    this.downloadFileOnPressed,
-    this.imageQuality,
-    this.maxFileSize,
-    this.selectFile = true,
-    this.selectImageGallery = true,
-    this.selectImageCamera = true,
-    this.style,
-    this.children,
-    this.autovalidateMode = AutovalidateMode.onUserInteraction,
-    this.fileType,
-  });
+  /// [isSelectedFile]
+  final bool isSelectedFile;
+
+  final String? Function(Map<String, dynamic>?)? enableSelectFile;
+
+  const TBIBUploaderFile(
+      {required this.selectedFile,
+      super.key,
+      this.validator,
+      this.selectMultiImage = false,
+      this.isHide = false,
+      this.allowedExtensions,
+      this.showFileName = false,
+      this.changeFileNameTo,
+      this.displayNote,
+      this.downloadFileOnPressed,
+      this.imageQuality,
+      this.maxFileSize,
+      this.selectFile = true,
+      this.selectImageGallery = true,
+      this.selectImageCamera = true,
+      this.style,
+      this.children,
+      this.enableSelectFile,
+      this.autovalidateMode = AutovalidateMode.onUserInteraction,
+      this.fileType,
+      this.isSelectedFile = false});
 
   @override
   State<TBIBUploaderFile> createState() => _UploaderFileState();
 }
 
 class _UploaderFileState extends State<TBIBUploaderFile> {
-  late final GlobalKey<FormFieldState<Map<String, dynamic>?>> _formFieldKey =
-      GlobalKey<FormFieldState<Map<String, dynamic>?>>();
+  // late final GlobalKey<FormFieldState<Map<String, dynamic>?>>? _formFieldKey =
+  //     GlobalKey<FormFieldState<Map<String, dynamic>?>>();
   final _animatedContainerKey = GlobalKey();
   double height = 0;
   double width = 0;
   bool isFirst = true;
-
-  @override
-  void initState() {
-    // hideWidth = widget.isHide;
-    // super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (isFirst) {
-        height = _animatedContainerKey.currentContext!.size!.height;
-        width = _animatedContainerKey.currentContext!.size!.width;
-        isFirst = false;
-        setState(() {});
-      }
-    });
-
-    super.initState();
-  }
 
   // static bool _refresh = false;
   @override
@@ -125,42 +119,60 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
         firstChild: Column(
           children: [
             if (widget.isHide) ...{
-              const SizedBox.shrink()
+              const SizedBox.shrink(),
             } else ...{
               TBIBUploaderFormField(
-                key: _formFieldKey,
+                enableSelectFile: widget.enableSelectFile,
+                //  key: _formFieldKey,
+                isSelectedFile: widget.isSelectedFile,
                 validator: widget.isHide ? null : widget.validator,
-                allowedExtensions:
-                    widget.allowedExtensions?.map((e) => e.name).toList(),
-                canDownloadFile: widget.canDownloadFile,
+                allowedExtensions: widget.allowedExtensions,
+                // canDownloadFile:
+                //     widget.selectMultiImage ? false : widget.canDownloadFile,
                 showFileName: widget.showFileName,
                 changeFileNameTo: widget.changeFileNameTo,
                 autovalidateMode: widget.autovalidateMode,
-                displayNote: widget.displayNote,
+                displayNote:
+                    widget.selectMultiImage ? null : widget.displayNote,
                 downloadFileOnPressed: widget.downloadFileOnPressed,
                 imageQuality: widget.imageQuality,
                 maxFileSize: widget.maxFileSize,
-                selectFile: widget.selectFile,
+                selectFile: widget.selectMultiImage ? false : widget.selectFile,
                 fileType: widget.fileType,
-                selectImageCamera: widget.selectImageCamera,
-                selectImageGallery: widget.selectImageGallery,
+                selectImageCamera:
+                    widget.selectMultiImage ? false : widget.selectImageCamera,
+                selectImageGallery:
+                    widget.selectMultiImage ? true : widget.selectImageGallery,
                 selectedFile: widget.selectedFile,
                 style: widget.style,
               ),
               if (widget.children != null)
-                ...widget.children!
-                    .map(
-                      (e) => Padding(
-                        padding:
-                            widget.style?.padding ?? const EdgeInsets.all(10),
-                        child: e,
-                      ),
-                    )
-                    .toList(),
-            }
+                ...widget.children!.map(
+                  (e) => Padding(
+                    padding: widget.style?.padding ?? const EdgeInsets.all(10),
+                    child: e,
+                  ),
+                ),
+            },
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    // hideWidth = widget.isHide;
+    // super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (isFirst) {
+        height = _animatedContainerKey.currentContext!.size!.height;
+        width = _animatedContainerKey.currentContext!.size!.width;
+        isFirst = false;
+        setState(() {});
+      }
+    });
+
+    super.initState();
   }
 }

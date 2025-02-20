@@ -10,6 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:tbib_file_uploader/src/service/format_bytes.dart';
 
+RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
+  if (T != dynamic &&
+      !(requestOptions.responseType == ResponseType.bytes ||
+          requestOptions.responseType == ResponseType.stream)) {
+    if (T == String) {
+      requestOptions.responseType = ResponseType.plain;
+    } else {
+      requestOptions.responseType = ResponseType.json;
+    }
+  }
+  return requestOptions;
+}
+
 /// File Uploader Init
 class TBIBFileUploader {
   static bool _uploadStarted = false;
@@ -54,96 +67,6 @@ class TBIBFileUploader {
     }
   }
 
-  /// upload file and receive response
-  Future<Map<String, dynamic>> startUploadFileWithResponse({
-    /// your dio
-    required Dio dio,
-
-    /// method api
-    required String method,
-
-    /// your path api
-    required String pathApi,
-
-    /// any data will send with file
-    required FormData yourData,
-    bool showNotification = true,
-    Duration refreshNotificationProgress = const Duration(seconds: 1),
-    bool showDownloadSpeed = true,
-    bool showNotificationWithoutProgress = false,
-    bool receiveBytesAsMB = false,
-    Function({required int countDownloaded, required int totalSize})?
-        onSendProgress,
-  }) async {
-    if (_uploadStarted) {
-      log('Upload already started');
-
-      return {};
-    }
-    final data = yourData;
-
-    var showNewNotification = true;
-    final startTime = DateTime.now();
-    var notificationDisplayDate = DateTime.now();
-    var endTime = DateTime.now().add(refreshNotificationProgress);
-
-    final result = await dio.fetch<Map<String, dynamic>>(
-      _setStreamType<Map<String, dynamic>>(
-        Options(
-          method: method,
-          // headers: headers,
-          // extra: extra,
-          contentType: 'multipart/form-data',
-        ).compose(
-          dio.options,
-          pathApi,
-          data: data,
-          onSendProgress: (count, total) {
-            if (showNewNotification) {
-              showNewNotification = false;
-
-              _onSendProgress(
-                count,
-                total,
-                startTime: startTime,
-                refreshNotificationProgress: refreshNotificationProgress,
-                showNotification: showDownloadSpeed,
-                showDownloadSpeed: showDownloadSpeed,
-                receiveBytesAsMB: receiveBytesAsMB,
-                showNotificationWithoutProgress:
-                    showNotificationWithoutProgress,
-                onSendProgress: onSendProgress,
-              );
-            } else {
-              notificationDisplayDate = DateTime.now();
-              if (notificationDisplayDate.millisecondsSinceEpoch >
-                  endTime.millisecondsSinceEpoch) {
-                //   await AwesomeNotifications().dismiss(1);
-                showNewNotification = true;
-                notificationDisplayDate = endTime;
-                endTime = DateTime.now().add(refreshNotificationProgress);
-              }
-            }
-          },
-        ),
-      ),
-    );
-    _uploadStarted = false;
-    if (showNotification) {
-      await AwesomeNotifications().createNotification(
-        content: NotificationContent(
-          id: 1,
-          channelKey: 'upload_completed_channel',
-          title: 'Upload completed',
-          body: 'Uploaded Successfully',
-          wakeUpScreen: true,
-          locked: true,
-        ),
-      );
-    }
-    return result.data!;
-  }
-
   /// upload file  only
   Future<void> startUploadFile({
     /// your dio
@@ -158,7 +81,7 @@ class TBIBFileUploader {
     /// any data will send with file
     required FormData yourData,
     bool showNotification = true,
-    Duration refreshNotificationProgress = const Duration(seconds: 1),
+    Duration refreshNotificationProgress = const Duration(milliseconds: 100),
     bool showDownloadSpeed = true,
     bool showNotificationWithoutProgress = false,
     bool receiveBytesAsMB = false,
@@ -233,6 +156,111 @@ class TBIBFileUploader {
     _uploadStarted = false;
   }
 
+  /// upload file and receive response
+  Future<Response<Map<String, dynamic>>?> startUploadFileWithResponse({
+    /// your dio
+    required Dio dio,
+
+    /// method api
+    required String method,
+
+    /// your path api
+    required String pathApi,
+
+    /// any data will send with file
+    required FormData yourData,
+    bool showNotification = true,
+    Duration refreshNotificationProgress = const Duration(seconds: 1),
+    bool showDownloadSpeed = true,
+    bool showNotificationWithoutProgress = false,
+    bool receiveBytesAsMB = false,
+    Function({required int countDownloaded, required int totalSize})?
+        onSendProgress,
+  }) async {
+    if (_uploadStarted) {
+      log('Upload already started');
+
+      return null;
+    }
+    final data = yourData;
+
+    var showNewNotification = true;
+    final startTime = DateTime.now();
+    var endTime = DateTime.now().add(refreshNotificationProgress);
+    if (Platform.isIOS && showNotification) {
+      await AwesomeNotifications().createNotification(
+        content: NotificationContent(
+          id: 1,
+          channelKey: 'upload_channel',
+          title: 'Start uploading',
+          body: '',
+          wakeUpScreen: true,
+          locked: true,
+        ),
+      );
+    }
+    try {
+      final result = await dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Map<String, dynamic>>(
+          Options(
+            method: method,
+            // headers: headers,
+            // extra: extra,
+            contentType: 'multipart/form-data',
+          ).compose(
+            dio.options,
+            pathApi,
+            data: data,
+            onSendProgress: (count, total) {
+              if (showNotification) {
+                final now = DateTime.now();
+                if (showNewNotification || now.isAfter(endTime)) {
+                  showNewNotification = false;
+
+                  if (Platform.isAndroid) {
+                    _onSendProgress(
+                      count,
+                      total,
+                      startTime: startTime,
+                      refreshNotificationProgress: refreshNotificationProgress,
+                      showNotification: showDownloadSpeed,
+                      showDownloadSpeed: showDownloadSpeed,
+                      receiveBytesAsMB: receiveBytesAsMB,
+                      showNotificationWithoutProgress:
+                          showNotificationWithoutProgress,
+                      onSendProgress: onSendProgress,
+                    );
+                  } else {
+                    // iOS-specific updates
+                    endTime = now.add(refreshNotificationProgress);
+                    showNewNotification = true;
+                  }
+                }
+              }
+            },
+          ),
+        ),
+      );
+      _uploadStarted = false;
+      if (showNotification) {
+        await AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: 1,
+            channelKey: 'upload_completed_channel',
+            title: 'Upload completed',
+            body: 'Uploaded Successfully',
+            wakeUpScreen: true,
+            locked: true,
+          ),
+        );
+      }
+      return result;
+    } catch (e) {
+      _uploadStarted = false;
+      return null;
+    }
+  }
+
   Future<void> _onSendProgress(
     int countDownloaded,
     int total, {
@@ -304,53 +332,44 @@ class TBIBFileUploader {
   }
 
   Future<void> _showProgressNotification(
-    // bool receiveBytesAsFileSizeUnit,
     bool showDownloadSpeed,
     int totalBytes,
     int receivedBytes,
-    // String fileName,
     DateTime startTime,
   ) async {
-    final num progress =
-        math.min((receivedBytes / totalBytes * 100).round(), 100);
-    final num totalMB = formatBytes(totalBytes, 2).size;
-    final num receivedMB = formatBytes(receivedBytes, 2).size;
-    // String receiveUnit = formatBytes(receivedBytes, 2).unit;
-    final totalUnit = formatBytes(totalBytes, 2).unit;
+    // Calculate progress
+    final progress =
+        totalBytes > 0 ? math.min(receivedBytes / totalBytes * 100, 100) : 0;
 
-    var speedMbps = 0.0;
+    // Format bytes into human-readable units
+    final totalData = formatBytes(totalBytes, 2);
+    final receivedData = formatBytes(receivedBytes, 2);
+    final totalMB = totalData.size;
+    final receivedMB = receivedData.size;
+
+    // Calculate download speed
+    var speedMBps = 0.0;
     if (showDownloadSpeed) {
       final duration = DateTime.now().difference(startTime);
-      final seconds = duration.inMilliseconds / 1000;
-      speedMbps = receivedMB / seconds * 8;
+      final seconds =
+          duration.inMilliseconds > 0 ? duration.inMilliseconds / 1000 : 1;
+      speedMBps = receivedBytes / seconds / (1024 * 1024); // Speed in MB/s
     }
-    // dev.log(
-    //     'after noti receivedBytes: $receivedBytes, totalBytes: $totalBytes progress: $progress');
+
+    // Send notification
     await AwesomeNotifications().createNotification(
       content: NotificationContent(
         id: 1,
         channelKey: 'upload_channel',
         title: 'Uploading',
         body:
-            'Uploading  ${totalBytes >= 0 ? '(${receivedMB.toStringAsFixed(2)} / ${totalMB.toStringAsFixed(2)})' : '${receivedMB.toStringAsFixed(2)} / nil'} $totalUnit ${speedMbps == 0 ? "" : 'speed ${(speedMbps / 8).toStringAsFixed(2)} MB/s'} ',
+            'Uploading (${receivedMB.toStringAsFixed(2)} / ${totalMB.toStringAsFixed(2)} MB)'
+            '${speedMBps > 0 ? 'Speed: ${speedMBps.toStringAsFixed(2)} MB/s' : ''}',
         notificationLayout: NotificationLayout.ProgressBar,
         wakeUpScreen: true,
         locked: true,
-        progress: progress.toInt(),
+        progress: progress.clamp(0, 100).toDouble(),
       ),
     );
   }
-}
-
-RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
-  if (T != dynamic &&
-      !(requestOptions.responseType == ResponseType.bytes ||
-          requestOptions.responseType == ResponseType.stream)) {
-    if (T == String) {
-      requestOptions.responseType = ResponseType.plain;
-    } else {
-      requestOptions.responseType = ResponseType.json;
-    }
-  }
-  return requestOptions;
 }
