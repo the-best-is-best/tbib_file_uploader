@@ -9,7 +9,10 @@ environment:
   flutter: ">=3.0.0"
 
 dependencies:
-  awesome_notifications: ^0.10.1
+  awesome_notifications:
+    git:
+       url: https://github.com/the-best-is-best/awesome_notifications.git
+       ref: development
   device_info_plus: ^11.2.2
   dio: ^5.8.0+1
   file_picker: ^9.0.0
