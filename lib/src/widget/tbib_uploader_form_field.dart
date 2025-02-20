@@ -95,9 +95,6 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   /// [allowedExtensions] if use select from storage will display only this extensions.
   final List<FileExtensions>? allowedExtensions;
 
-  /// [canDownloadFile] if true, you can download file after upload.
-  final bool canDownloadFile;
-
   /// [changeFileNameTo] Change file name after selected
   final String? changeFileNameTo;
 
@@ -129,6 +126,10 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
   /// [selectImageCamera] is a bool to select image from camera.
   final bool selectImageCamera;
 
+  final bool isSelectedFile;
+
+  final String? Function(Map<String, dynamic>?)? enableSelectFile;
+
   /// Creates a [TBIBUploaderFormField] that contains a [FileUploader].
   TBIBUploaderFormField({
     required this.selectedFile,
@@ -140,11 +141,12 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
     this.fileType,
     this.displayNote,
     this.style,
-    this.canDownloadFile = false,
     this.showFileName = false,
     this.selectFile = true,
     this.selectImageCamera = true,
     this.selectImageGallery = true,
+    required this.isSelectedFile,
+    this.enableSelectFile,
     super.key,
     // super.onSaved,
     super.validator,
@@ -165,12 +167,14 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
               'name': null,
               'error': null,
               'showError': false,
+              'enableValidatorError': '',
             };
             data = formState.value ?? data;
 
             if (formState.hasError) {
               data['error'] = data['error'] ?? formState.errorText;
               data['showError'] = true;
+              data['enableValidatorError'] = data['enableValidatorError'];
               textEditingController.text = '';
             } else {
               if (!formState.hasError &&
@@ -232,12 +236,18 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                               : style.hideBorder
                                   ? InputBorder.none
                                   : null,
-                          errorText: data['showError'] == false
-                              ? null
-                              : (data['error'].toString().contains('null')
+                          errorText: data['enableValidatorError']
+                                  .toString()
+                                  .isNotEmpty
+                              ? data['enableValidatorError']
+                              : data['showError'] == false
                                   ? null
-                                  : data['error'].toString()),
-                          labelText: style?.labelText,
+                                  : (data['error'].toString().contains('null')
+                                      ? null
+                                      : data['error'].toString()),
+                          labelText: isSelectedFile
+                              ? style?.selectFile ?? 'Selected File'
+                              : style?.labelText,
                           hintText: style?.hintText ?? 'Select File',
                           labelStyle: style?.labelStyle ??
                               const TextStyle(
@@ -255,6 +265,15 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                       color: style?.iconColor ?? Colors.black,
                                     ),
                                 onPressed: () async {
+                                  if (enableSelectFile
+                                          ?.call(data)
+                                          ?.isNotEmpty ==
+                                      true) {
+                                    data['enableValidatorError'] =
+                                        enableSelectFile!.call(data);
+                                    formState.didChange(data);
+                                    return;
+                                  }
                                   await _selectFileOrImage(
                                     context,
                                     maxFileSize,
@@ -273,7 +292,7 @@ class TBIBUploaderFormField extends FormField<Map<String, dynamic>?> {
                                   );
                                 },
                               ),
-                              if (canDownloadFile) ...{
+                              if (downloadFileOnPressed != null) ...{
                                 IconButton(
                                   icon: style?.fileDownloadIcon ??
                                       Icon(

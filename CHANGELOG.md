@@ -1,3 +1,28 @@
+## 2.4.0
+
+- Support flutter 3.29.x
+
+## 2.3.3
+
+- Fix validation in enableSelectFile
+
+## 2.3.2
+
+- enableSelectFile this is validation work before select file
+
+## 2.3.1
+
+- Fix bugs
+
+## 2.3.0
+
+canDownload bool has been removed
+
+## 2.3.0+beta1
+
+- Add isSelectedFile
+- update dep
+
 ## 2.2.8 - 2.2.9 - 2.2.10 - 2.2.11
 
 - Fix bug

@@ -14,8 +14,8 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [allowedExtensions] is a list of allowed file extensions.
   final List<FileExtensions>? allowedExtensions;
 
-  /// [canDownloadFile] is a boolean to download file.
-  final bool canDownloadFile;
+  // /// [canDownloadFile] is a boolean to download file.
+  // final bool canDownloadFile;
 
   /// [showFileName] is a boolean to show file name.
   final bool showFileName;
@@ -63,28 +63,33 @@ class TBIBUploaderFile extends StatefulWidget {
   /// [fileType] is a [FileType] to select file type.
   final FileType? fileType;
 
-  const TBIBUploaderFile({
-    required this.selectedFile,
-    super.key,
-    this.validator,
-    this.selectMultiImage = false,
-    this.isHide = false,
-    this.allowedExtensions,
-    this.canDownloadFile = false,
-    this.showFileName = false,
-    this.changeFileNameTo,
-    this.displayNote,
-    this.downloadFileOnPressed,
-    this.imageQuality,
-    this.maxFileSize,
-    this.selectFile = true,
-    this.selectImageGallery = true,
-    this.selectImageCamera = true,
-    this.style,
-    this.children,
-    this.autovalidateMode = AutovalidateMode.onUserInteraction,
-    this.fileType,
-  });
+  /// [isSelectedFile]
+  final bool isSelectedFile;
+
+  final String? Function(Map<String, dynamic>?)? enableSelectFile;
+
+  const TBIBUploaderFile(
+      {required this.selectedFile,
+      super.key,
+      this.validator,
+      this.selectMultiImage = false,
+      this.isHide = false,
+      this.allowedExtensions,
+      this.showFileName = false,
+      this.changeFileNameTo,
+      this.displayNote,
+      this.downloadFileOnPressed,
+      this.imageQuality,
+      this.maxFileSize,
+      this.selectFile = true,
+      this.selectImageGallery = true,
+      this.selectImageCamera = true,
+      this.style,
+      this.children,
+      this.enableSelectFile,
+      this.autovalidateMode = AutovalidateMode.onUserInteraction,
+      this.fileType,
+      this.isSelectedFile = false});
 
   @override
   State<TBIBUploaderFile> createState() => _UploaderFileState();
@@ -117,20 +122,19 @@ class _UploaderFileState extends State<TBIBUploaderFile> {
               const SizedBox.shrink(),
             } else ...{
               TBIBUploaderFormField(
+                enableSelectFile: widget.enableSelectFile,
                 //  key: _formFieldKey,
-
+                isSelectedFile: widget.isSelectedFile,
                 validator: widget.isHide ? null : widget.validator,
                 allowedExtensions: widget.allowedExtensions,
-                canDownloadFile:
-                    widget.selectMultiImage ? false : widget.canDownloadFile,
+                // canDownloadFile:
+                //     widget.selectMultiImage ? false : widget.canDownloadFile,
                 showFileName: widget.showFileName,
                 changeFileNameTo: widget.changeFileNameTo,
                 autovalidateMode: widget.autovalidateMode,
                 displayNote:
                     widget.selectMultiImage ? null : widget.displayNote,
-                downloadFileOnPressed: widget.selectMultiImage
-                    ? null
-                    : widget.downloadFileOnPressed,
+                downloadFileOnPressed: widget.downloadFileOnPressed,
                 imageQuality: widget.imageQuality,
                 maxFileSize: widget.maxFileSize,
                 selectFile: widget.selectMultiImage ? false : widget.selectFile,
